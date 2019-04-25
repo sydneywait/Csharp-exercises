@@ -48,6 +48,9 @@ namespace Planner
             RecCenter.Construct();
             RecCenter.Purchase("Jeff Bezos");
 
+
+
+
             // After all of the buildings have been purchased, display the following information to the console for each building.
 
             // 100 Main Street
@@ -57,16 +60,49 @@ namespace Planner
             // Owned by Bob Ross
             // 16128 cubic meters of space
 
-            List <Building> buildingList = new List<Building>(){
+            List<Building> buildingList = new List<Building>(){
                 EastSt,
                 ChaseBank,
                 RecCenter
 
             };
 
-            foreach(Building building in buildingList){
-            building.DisplayInfo();
+            City Ona = new City("Ona")
+            {
+                mayor = "Isaac Wait",
+                yearEst = 1912
+            };
+
+            City Huntington = new City("Huntington")
+            {
+                mayor = "Steve Williams",
+                yearEst = 1845
+            };
+
+            Ona.addBuilding(EastSt);
+            Huntington.addBuilding(RecCenter);
+            Huntington.addBuilding(ChaseBank);
+
+            List<City> cityList = new List<City>();
+            cityList.Add(Huntington);
+            cityList.Add(Ona);
+
+            foreach (City city in cityList)
+            {
+                Console.WriteLine("*******************************");
+                Console.WriteLine($"******Buildings in {city.nameOfCity}*********");
+                Console.WriteLine("*******************************");
+
+                foreach (Building building in city.cityBuildingList)
+                {
+                    building.DisplayInfo();
+                }
+
             }
+
+
+
+
 
 
 
