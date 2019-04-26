@@ -35,6 +35,12 @@ namespace librarySystem
 
             Holly.checkOutBook(Grapes, Huntington, Isaac);
 
+            Isaac.printLoanReport();
+            Grapes.dueDate=DateTime.Today.AddDays(-10);
+            Holly.returnBook(Grapes, Huntington, Isaac);
+
+            Isaac.payOverdueFees(4);
+
         }
     }
 }
