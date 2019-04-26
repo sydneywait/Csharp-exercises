@@ -31,6 +31,9 @@ namespace librarySystem
             Huntington.currentInventory.Add(DQ);
             Barboursville.currentInventory.Add(RJ);
 
+            Huntington.printInventoryReport();
+            Barboursville.printInventoryReport();
+
             // Check out a book to a patron
 
             Holly.checkOutBook(Grapes, Huntington, Isaac);
