@@ -1,11 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace address_book_try_catch
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
            class Program
 {
     /*
@@ -53,24 +50,30 @@ namespace address_book_try_catch
             "sue.jones@email.com",
             "juan.lopez@email.com",
             "bob.smith@email.com",
+            "email@email"
         };
 
-        // Insert an email that does NOT match a Contact
-        emails.Insert(1, "not.in.addressbook@email.com");
 
 
-        //  Search the AddressBook by email and print the information about each Contact
+
+        // //  Search the AddressBook by email and print the information about each Contact
         foreach (string email in emails)
         {
+            try{
             Contact contact = addressBook.GetByEmail(email);
             Console.WriteLine("----------------------------");
-            Console.WriteLine($"Name: {contact.FullName}");
+            Console.WriteLine($"Name: {contact.FirstName} {contact.LastName}");
             Console.WriteLine($"Email: {contact.Email}");
             Console.WriteLine($"Address: {contact.Address}");
+            }
+            catch (KeyNotFoundException){
+                Console.WriteLine("----------------------------");
+                Console.WriteLine($"{email} is not in the database");
+            }
         }
     }
 }
 
         }
-    }
-}
+
+
