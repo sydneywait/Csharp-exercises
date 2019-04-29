@@ -24,13 +24,19 @@ namespace librarySystem
         }
 
         public void printLoanReport()
+
         {
+            if(checkedOutBooks.Count>0){
             Console.WriteLine($"{firstName} has checked out the following books:");
 
             foreach (Book book in checkedOutBooks)
             {
 
                 Console.WriteLine($"  -'{book.title}' by {book.author} due {book.dueDate}");
+            }
+            }
+            else{
+                Console.WriteLine($"{firstName} does not have any books checked out");
             }
         }
     }

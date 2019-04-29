@@ -7,9 +7,6 @@ namespace librarySystem
     {       public Book(string titleParam, string authorParam){
             title=titleParam;
             author=authorParam;
-
-
-
         }
         public string title {get; set;}
         public string author {get; set;}

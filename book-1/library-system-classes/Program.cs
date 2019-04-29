@@ -5,8 +5,78 @@ namespace librarySystem
 {
     class Program
     {
+        static Book checkBookParam(Dictionary<string, Book> allBooks)
+        {
+
+            Book bookParam = new Book("", "");
+            bool bookLoop = false;
+            while (bookLoop == false)
+            {
+                Console.Write($"Enter the name of the book: ");
+                string bookName = Console.ReadLine();
+                try
+                {
+                    bookParam = allBooks[bookName];
+                    bookLoop = true;
+                }
+                catch (KeyNotFoundException)
+                {
+                    Console.WriteLine("Book title not found");
+                }
+
+            }
+            return bookParam;
+
+        }
+
+        static Library checkLibraryParam(Dictionary<string, Library> allLibraries)
+        {
+            Library libraryParam = new Library(" ", " ");
+            bool libraryLoop = false;
+            while (libraryLoop == false)
+            {
+                Console.Write($"Enter the name of the library: ");
+                string libraryName = Console.ReadLine();
+
+                try
+                {
+                    libraryParam = allLibraries[libraryName];
+                    libraryLoop = true;
+
+                }
+                catch (KeyNotFoundException)
+                {
+                    Console.WriteLine("Library not found");
+                }
+            }
+            return libraryParam;
+        }
+
+        static Patron checkPatronParam(Dictionary<string, Patron> allPatrons)
+        {
+            Patron patronParam = new Patron("", "", new Library("", ""));
+            bool patronLoop = false;
+            while (patronLoop == false)
+            {
+                Console.Write($"Enter the name of the patron: ");
+                string patronName = Console.ReadLine();
+                try
+                {
+                    patronParam = allPatrons[patronName];
+                    patronLoop = true;
+                }
+                catch
+                {
+                    Console.WriteLine("Patron not found");
+                }
+            }
+            return patronParam;
+        }
+
         static void Main(string[] args)
         {
+
+
 
             // Create several Libraries
             Library Huntington = new Library("Huntington", "100 Main st");
@@ -43,18 +113,31 @@ namespace librarySystem
             Grapes.dueDate = DateTime.Today.AddDays(-10);
             Holly.returnBook(Grapes, Huntington, Isaac);
 
+            Holly.checkOutBook(Grapes, Huntington, Sydney);
+
             Isaac.payOverdueFees(4);
 
             // Make a list of all the books in the database
-            List<Book> allBooks = new List<Book>()
-            {Grapes, Harry, DQ, RJ};
+            Dictionary<string, Book> allBooks = new Dictionary<string, Book>()
+            {{Grapes.title, Grapes},
+             {Harry.title, Harry},
+             {DQ.title, DQ},
+             {RJ.title, RJ}}
+             ;
 
             // Make a list of all the patrons in the database
-            List<Patron> allPatrons = new List<Patron>() { Sydney, Isaac };
+            Dictionary<string, Patron> allPatrons = new Dictionary<string, Patron>() {
+                {Sydney.firstName, Sydney}, {Isaac.firstName, Isaac}
+                 };
 
             // Make a list of all the Libraries in the database
-            List<Library> allLibraries = new List<Library>() { Huntington, Barboursville };
+            Dictionary<string, Library> allLibraries = new Dictionary<string, Library>() {
+                {Huntington.name, Huntington},
+                {Barboursville.name, Barboursville}
+                };
 
+            bool endTask = false;
+            while(endTask==false){
             // Ask the librarian to choose an option for performing tasks
             Console.WriteLine("Choose an option from the following list:");
             Console.WriteLine("\t1 - Check Out Book");
@@ -62,6 +145,7 @@ namespace librarySystem
             Console.WriteLine("\t3 - Pay Overdue Fees");
             Console.WriteLine("\t4 - Print Library Inventory");
             Console.WriteLine("\t5 - Print Customer's Loans");
+            Console.WriteLine("\t6 - Exit Menu");
             Console.Write("Your option? ");
 
 
@@ -69,70 +153,81 @@ namespace librarySystem
             switch (Console.ReadLine())
             {
                 case "1":
-                    Book bookParam = new Book("", "");
-
-                    Console.WriteLine($"Enter the name of the book:");
-                    string bookName = Console.ReadLine();
-                    foreach (Book book in allBooks)
-                    {
-                        if (book.title == bookName)
-                        {
-                            bookParam = book;
-                            Console.WriteLine($"found book {book.title}");
-                            break;
-                        }
-
-                    }
-
-                    Library libraryParam = new Library(" ", " ");
-                    Console.WriteLine($"Enter the name of the library");
-                    string libraryName = Console.ReadLine();
-
-                    foreach(Library library in allLibraries){
-
-                        if(library.name==libraryName){
-                            libraryParam=library;
-                            break;
-                        }
-                    }
-
-                    Patron patronParam = new Patron("", "", new Library("",""));
-                    Console.WriteLine($"Enter the name of the patron");
-                    string patronName = Console.ReadLine();
-
-
-                    foreach (Patron patron in allPatrons)
-                    {
-                        if (patron.firstName == patronName)
-                        {
-                            patronParam = patron;
-                            break;
-                        }
-                        else
-                        {
-
-                        }
-                    }
-
+                    // Check out a book
+                    Book bookParam = Program.checkBookParam(allBooks);
+                    Library libraryParam = Program.checkLibraryParam(allLibraries);
+                    Patron patronParam = Program.checkPatronParam(allPatrons);
 
                     Holly.checkOutBook(bookParam, libraryParam, patronParam);
+                    Console.Write("Press any key to continue");
+                    Console.ReadKey();
                     break;
+
 
                 case "2":
-                    Console.WriteLine($"");
+                    // Check in a book
+                    Book bookParam2 = Program.checkBookParam(allBooks);
+                    Library libraryParam2 = Program.checkLibraryParam(allLibraries);
+                    Patron patronParam2 = Program.checkPatronParam(allPatrons);
+                    Holly.returnBook(bookParam2, libraryParam2, patronParam2);
+                    Console.Write("Press any key to continue");
+                    Console.ReadKey();
+
                     break;
+
+
                 case "3":
-                    Console.WriteLine($"");
+                    // Pay overdue fees
+                    Patron patronParam3 = Program.checkPatronParam(allPatrons);
+                    Console.WriteLine($"{patronParam3.firstName} owes ${patronParam3.overdueFees}");
+                    bool feeLoop = false;
+                    while (feeLoop == false)
+                    {
+                        Console.Write("Enter payment amount: ");
+                        string paymentAmount = Console.ReadLine();
+
+                        try
+                        {
+                            patronParam3.payOverdueFees(Convert.ToDouble(paymentAmount));
+                            feeLoop = true;
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("***Invalid payment entry***");
+                        }
+                    };
+                    Console.Write("Press any key to continue");
+                    Console.ReadKey();
+
                     break;
                 case "4":
-                    Console.WriteLine($"");
+                    // Print a library's inventory
+                    Library libraryParam4 = checkLibraryParam(allLibraries);
+                    libraryParam4.printInventoryReport();
+                    Console.Write("Press any key to continue");
+                    Console.ReadKey();
                     break;
+
+
                 case "5":
-                    Console.WriteLine($"");
+                    // Print a customer's loans
+                    Patron patronParam5 = checkPatronParam(allPatrons);
+                    patronParam5.printLoanReport();
+                    Console.Write("Press any key to continue");
+                    Console.ReadKey();
                     break;
+
+                case "6":
+                    Console.WriteLine("*****Goodbye*****");
+                    endTask = true;
+                    break;
+
+            }
             }
 
-
+            //End Main
         }
     }
 }
+
+
