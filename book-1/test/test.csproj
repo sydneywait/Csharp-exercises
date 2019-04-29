@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RootNamespace>student_exercises_classes</RootNamespace>
   </PropertyGroup>
 
 </Project>
