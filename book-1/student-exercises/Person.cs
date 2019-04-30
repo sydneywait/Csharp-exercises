@@ -18,6 +18,7 @@ namespace student_exercises
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string slackHandle { get; set; }
+        public Cohort CurrentCohort { get; set; }
 
 
     }

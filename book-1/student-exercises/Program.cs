@@ -24,21 +24,26 @@ namespace student_exercises
             Cohort cohort3 = new Cohort("Cohort 3");
 
             // Create 4, or more, students and assign them to one of the cohorts.
-            Student Sydney = new Student("Sydney", "Wait", "Sydneywait");
+            Student Sydney = new Student("Sydney", "Hait", "Sydneywait");
             Student George = new Student("George", "Wait", "Georgewait");
-            Student Isaac = new Student("Isaac", "Wait", "Isaacwait");
-            Student Thomas = new Student("Thomas", "Wait", "Thomaswait");
-            Student Rachel = new Student("Rachel", "Wait", "Rachelwait");
-            Student Steven = new Student("Steven", "Wait", "Stevewait");
-            Student Connie = new Student("Connie", "Wait", "Conniewait");
+            Student Isaac = new Student("Isaac", "Bait", "Isaacwait");
+            Student Thomas = new Student("Thomas", "Kait", "Thomaswait");
+            Student Rachel = new Student("Rachel", "Tait", "Rachelwait");
+            Student Steven = new Student("Steven", "Lait", "Stevewait");
+            Student Connie = new Student("Connie", "Nait", "Conniewait");
+            Student Bob = new Student("Bob", "Bardash", "bobbardash");
 
-            cohort1.students.Add(Sydney);
-            cohort2.students.Add(George);
-            cohort3.students.Add(Isaac);
-            cohort1.students.Add(Thomas);
-            cohort2.students.Add(Rachel);
-            cohort3.students.Add(Steven);
-            cohort2.students.Add(Connie);
+            // cohort1.students.Add(Sydney);
+            // cohort2.students.Add(George);
+            // cohort3.students.Add(Isaac);
+            // cohort1.students.Add(Thomas);
+            // cohort2.students.Add(Rachel);
+            // cohort3.students.Add(Steven);
+            // cohort2.students.Add(Connie);
+
+            cohort1.enrollStudent(new List<Student>() { Sydney, George, Isaac });
+            cohort2.enrollStudent(new List<Student>() { Thomas, Rachel, Bob });
+            cohort3.enrollStudent(new List<Student> { Steven, Connie });
 
             // Create 3, or more, instructors and assign them to one of the cohorts.
             Instructor Kim = new Instructor("Kim", "Preece", "kimpreece");
@@ -47,11 +52,15 @@ namespace student_exercises
             Instructor Bill = new Instructor("Bill", "Gates", "bgates");
             Instructor Steve = new Instructor("Steve", "Jobs", "stevejobs");
 
-            cohort1.instructors.Add(Kim);
-            cohort2.instructors.Add(Jordan);
-            cohort3.instructors.Add(Josh);
-            cohort1.instructors.Add(Bill);
-            cohort2.instructors.Add(Steve);
+            // cohort1.instructors.Add(Kim);
+            // cohort2.instructors.Add(Jordan);
+            // cohort3.instructors.Add(Josh);
+            // cohort1.instructors.Add(Bill);
+            // cohort2.instructors.Add(Steve);
+
+            cohort1.addInstructor(new List<Instructor>() { Kim, Bill });
+            cohort2.addInstructor(new List<Instructor>() { Jordan, Josh });
+            cohort3.addInstructor(new List<Instructor>() { Steve });
 
             // Have each instructor assign 2 exercises to each of the students.
             Kim.assignExercise(Sydney, urbanPlanner);
@@ -61,13 +70,13 @@ namespace student_exercises
             Josh.assignExercise(Isaac, customTypes);
             Josh.assignExercise(Steven, getCoffee);
             Bill.assignExercise(Sydney, overlyExcited);
-            Bill.assignExercise(Thomas, getCoffee);
+            Bill.assignExercise(Sydney, getCoffee);
             Steve.assignExercise(Rachel, getCoffee);
             Steve.assignExercise(Connie, customTypes);
 
             // Create a list of students. Add all of the student instances to it.
             List<Student> students = new List<Student>(){
-                Sydney, Connie, Steven, Isaac, George, Rachel, Thomas
+                Sydney, Connie, Steven, Isaac, George, Rachel, Thomas, Bob
 
             };
 
@@ -123,18 +132,67 @@ namespace student_exercises
             Console.WriteLine("-------------------");
 
             // List students in a particular cohort by using the Where() LINQ method.
-            var studentsInCohort = cohorts.Where(c => c.name == "Cohort 1").OfType<List<Student>>();
-
-
-
-
+            List<Student> studentsInCohort = students.Where(s => s.CurrentCohort.name == "Cohort 1").ToList();
+            Console.WriteLine("Students in Cohort 1:");
+            studentsInCohort.ForEach(s => Console.WriteLine($" {s.firstName} {s.lastName}"));
+            Console.WriteLine("-------------------");
 
             // List instructors in a particular cohort by using the Where() LINQ method.
+            List<Instructor> instructorsInCohort = instructors.Where(ci => ci.CurrentCohort.name == "Cohort 1").ToList();
+            Console.WriteLine("Instructors in Cohort 1:");
+            instructorsInCohort.ForEach(ci => Console.WriteLine($" {ci.firstName} {ci.lastName}"));
+            Console.WriteLine("-------------------");
+
+
             // Sort the students by their last name.
 
+            List<Student> studentsByLastName = students.OrderBy(s => s.lastName).ToList();
+            Console.WriteLine("Students sorted by last name:");
+            studentsByLastName.ForEach(s => Console.WriteLine($" {s.lastName}, {s.firstName}"));
+            Console.WriteLine("-------------------");
+
             // Display any students that aren't working on any exercises (Make sure one of your student instances don't have any exercises. Create a new student if you need to.)
+
+            List<Student> studentsWithoutExercises = students.Where(s => s.exercises.Count() == 0).ToList();
+            Console.WriteLine("Students without Exercises:");
+            studentsWithoutExercises.ForEach(s => Console.WriteLine($" {s.firstName} {s.lastName}"));
+            Console.WriteLine("-------------------");
+
+
             // Which student is working on the most exercises? Make sure one of your students has more exercises than the others.
-            // How many students in each cohort?
+            // students.ForEach(student => Console.WriteLine($"{student.firstName} {student.exercises.Count()}"));
+            var maxStudent = students.OrderByDescending(student => student.exercises.Count()).Take(1).ToList();
+            Console.WriteLine($"This is the student with the most exercises {maxStudent[0].firstName}");
+            Console.WriteLine("-------------------");
+
+
+            IEnumerable<StudentReportItem> studentReport = (from student in students
+                                                            select new StudentReportItem()
+                                                            {
+                                                                StudentName = $"{student.firstName} {student.lastName}",
+                                                                numberOfExercises = student.exercises.Count(),
+                                                            }).ToList();
+
+            foreach (StudentReportItem student in studentReport)
+            {
+                Console.WriteLine($"{student.StudentName} - {student.numberOfExercises} exercises");
+            };
+            Console.WriteLine("-------------------");
+
+            IEnumerable<CohortReportItem> cohortReport = from cohort in cohorts
+                                                         select new CohortReportItem()
+                                                         {
+                                                             CohortName = cohort.name,
+                                                             numberOfStudents = cohort.students.Count(),
+
+                                                         };
+            foreach (CohortReportItem cohort in cohortReport)
+            {
+                Console.WriteLine($"{cohort.CohortName} - {cohort.numberOfStudents} students");
+            };
+
+            Console.WriteLine("-------------------");
+
 
 
             // End Main
