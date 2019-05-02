@@ -116,25 +116,28 @@ namespace linq_intro
 };
 
             List<int> noSquare = new List<int>();
+            noSquare = wheresSquared.TakeWhile(n=>Math.Sqrt(n)%1 !=0).ToList();
 
-            wheresSquared.ForEach(n =>
-            {
-                double numToTest = Math.Sqrt(n);
-                if (Math.Sqrt(n)%1 != 0)
-                {
-                    noSquare.Add(n);
-                }
-                else
-                {
-                    Console.WriteLine($"{n} is a perfect square!");
-                }
+            // wheresSquared.ForEach(n =>
+            // {
+            //     if (Math.Sqrt(n)%1 != 0)
+            //     {
+            //         noSquare.Add(n);
+            //     }
+            //     else
+            //     {
+            //         Console.WriteLine($"{n} is a perfect square!");
+            //     }
 
 
-            });
+            // });
              Console.WriteLine("The following numbers are not perfect squares!");
                 noSquare.ForEach(ns => Console.Write($" {ns}"));
                 Console.WriteLine("");
                 Console.WriteLine("------------------");
+
+
+
 
 
 
