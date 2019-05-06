@@ -55,11 +55,20 @@ SELECT g.Label, COUNT(s.title) as 'Number of Songs' FROM Album a JOIN Song s on 
 
 -- Using MAX() function, write a select statement to find the album with the longest duration. The result should display the album title and the duration.
 SELECT Title, Max(AlbumLength)  OVER (PARTITION BY AlbumLength) AS 'Album Length' FROM Album a WHERE a.AlbumLength = (SELECT MAX(AlbumLength) FROM Album);
+--or much easier :/
+SELECT Title, AlbumLength FROM Album WHERE AlbumLength = (SELECT Max(AlbumLength) FROM Album);
 
 -- Using MAX() function, write a select statement to find the song with the longest duration. The result should display the song title and the duration.
 SELECT Title, Max(SongLength) OVER (PARTITION BY SongLength) AS 'Song Length' FROM Song s WHERE s.SongLength = (SELECT MAX(SongLength) FROM Song);
+--or much easier :/
+SELECT Title, SongLength FROM Song WHERE SongLength = (SELECT Max(SongLength) FROM Song);
+
 
 
 -- Modify the previous query to also display the title of the album.
 SELECT s.Title AS 'Song Title', a.Title AS 'Album Title', Max(s.SongLength) OVER (PARTITION BY SongLength) AS 'Song Length' FROM Song s JOIN Album a ON s.AlbumId = a.Id WHERE s.SongLength = (SELECT MAX(SongLength) FROM Song);
+--or much easier :/
+SELECT s.Title AS 'Song Title', a.Title AS 'Album.Title',  SongLength FROM Song s JOIN Album a ON s.AlbumId = a.Id WHERE SongLength = (SELECT Max(SongLength) FROM Song);
+
+
 
