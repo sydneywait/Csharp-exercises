@@ -2,6 +2,8 @@
 
 -- Query all of the entries in the Genre table
 SELECT * FROM Genre;
+--OR
+SELECT Id, Label FROM Genre;
 
 -- Using the INSERT statement, add one of your favorite artists to the Artist table.
 INSERT INTO Artist (ArtistName, YearEstablished) VALUES ('Modest Mouse', 1992);
@@ -10,7 +12,7 @@ INSERT INTO Artist (ArtistName, YearEstablished) VALUES ('Modest Mouse', 1992);
 SELECT * FROM Artist;  --Modest mouse is Id 28
 SELECT * FROM Genre;   --PUNK is Id 9
 
-INSERT INTO Album (Title, ReleaseDate, AlbumLength, Label, ArtistId, GenreId) VALUES ('The Lonesome Crowded West', '11/18/1992', 4438, 'Glacial PLace',28 , 9);
+INSERT INTO Album (Title, ReleaseDate, AlbumLength, Label, ArtistId, GenreId) VALUES ('The Lonesome Crowded West', '11/18/1992', 4438, 'Glacial Place',(SELECT Id From Artist WHERE ArtistName = 'Modest Mouse') , (SELECT Id FROM Genre WHERE Label = "Punk"));
 INSERT INTO Album (Title, ReleaseDate, AlbumLength, Label, ArtistId, GenreId) VALUES ('Strangers to Ourselves', '03/17/2015', 3437, 'Epic',28 , 9);
 
 --Actually, Modest Mouse is Alternative Rock, not punk
@@ -37,10 +39,10 @@ INSERT INTO Song (Title, SongLength, ReleaseDate, GenreId, ArtistId, AlbumId) VA
 SELECT s.Title as 'Song Title', al.title as 'Album Title', ar.ArtistName as 'Artist Name' FROM Song s LEFT JOIN Album al  on s.AlbumId = al.Id LEFT JOIN Artist ar on s.ArtistId = ar.Id WHERE ar.ArtistName = 'Modest Mouse';
 
 -- Write a SELECT statement to display how many songs exist for each album. You'll need to use the COUNT() function and the GROUP BY keyword sequence.
-SELECT a.Title, COUNT(s.title) as 'Number of Songs' FROM Album a LEFT JOIN  Song s on a.Id = s.AlbumId WHERE a.artistId=28 GROUP BY a.Title;
+SELECT a.Title, COUNT(s.Id) as 'Number of Songs' FROM Album a LEFT JOIN  Song s on a.Id = s.AlbumId WHERE a.artistId=28 GROUP BY a.Title;
 
 -- Write a SELECT statement to display how many songs exist for each artist. You'll need to use the COUNT() function and the GROUP BY keyword sequence.
-SELECT ar.ArtistName, COUNT(s.title) as 'Number of Songs' FROM Album al LEFT JOIN  Song s on al.Id = s.AlbumId LEFT JOIN Artist ar on ar.Id =al.ArtistId WHERE al.artistId=28 GROUP BY ar.ArtistName;
+SELECT ar.ArtistName, COUNT(s.Id) as 'Number of Songs' FROM Album al LEFT JOIN  Song s on al.Id = s.AlbumId LEFT JOIN Artist ar on ar.Id =al.ArtistId WHERE al.artistId=28 GROUP BY ar.ArtistName;
 
 -- Write a SELECT statement to display how many songs exist for each genre. You'll need to use the COUNT() function and the GROUP BY keyword sequence.
 
@@ -58,10 +60,19 @@ SELECT Title, Max(AlbumLength)  OVER (PARTITION BY AlbumLength) AS 'Album Length
 --or much easier :/
 SELECT Title, AlbumLength FROM Album WHERE AlbumLength = (SELECT Max(AlbumLength) FROM Album);
 
+--or
+SELECT TOP 1 Title, AlbumLength FROM Album ORDER BY AlbumLength DESC;
+
 -- Using MAX() function, write a select statement to find the song with the longest duration. The result should display the song title and the duration.
 SELECT Title, Max(SongLength) OVER (PARTITION BY SongLength) AS 'Song Length' FROM Song s WHERE s.SongLength = (SELECT MAX(SongLength) FROM Song);
+
+
 --or much easier :/
 SELECT Title, SongLength FROM Song WHERE SongLength = (SELECT Max(SongLength) FROM Song);
+
+--OR
+SELECT TOP 1 Title, SongLength FROM Song ORDER BY SongLength DESC;
+
 
 
 
@@ -69,6 +80,11 @@ SELECT Title, SongLength FROM Song WHERE SongLength = (SELECT Max(SongLength) FR
 SELECT s.Title AS 'Song Title', a.Title AS 'Album Title', Max(s.SongLength) OVER (PARTITION BY SongLength) AS 'Song Length' FROM Song s JOIN Album a ON s.AlbumId = a.Id WHERE s.SongLength = (SELECT MAX(SongLength) FROM Song);
 --or much easier :/
 SELECT s.Title AS 'Song Title', a.Title AS 'Album.Title',  SongLength FROM Song s JOIN Album a ON s.AlbumId = a.Id WHERE SongLength = (SELECT Max(SongLength) FROM Song);
+
+--OR
+SELECT TOP 1 s.Title, s.SongLength FROM Song s JOIN Album a ON s.AlbumId = a.Id WHERE SongLength = (SELECT Max(SongLength) FROM Song) ORDER BY SongLength DESC;
+
+
 
 
 
