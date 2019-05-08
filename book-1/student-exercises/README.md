@@ -80,3 +80,53 @@ Once you have defined all of your custom types, go to your `Main()` method in `P
     ```
 
 Generate a report that displays which students are working on which exercises.
+
+# Part 3
+Create tables from each entity in the Student Exercises ERD.
+Populate each table with data. You should have 2-3 cohorts, 5-10 students, 4-8 instructors, 2-5 exercises and each student should be assigned 1-2 exercises.
+
+```
+DROP TABLE IF EXISTS Student;
+DROP TABLE IF EXISTS Instructor;
+DROP TABLE IF EXISTS Cohort;
+DROP TABLE IF EXISTS Exercise;
+
+ CREATE TABLE Cohort (
+  ID INTEGER NOT NULL PRIMARY KEY IDENTITY,
+  [name] VARCHAR(55) NOT NULL 
+);
+
+CREATE TABLE Student(
+ID INTEGER NOT NULL PRIMARY KEY IDENTITY,
+[firstName] VARCHAR(55) NOT NULL,
+[lastName] VARCHAR(55) NOT NULL,
+[slackHandle] VARCHAR(55) NOT NULL,
+[currentCohort] INTEGER NOT NULL,
+ CONSTRAINT FK_Student_currentCohort FOREIGN KEY(currentCohort) REFERENCES Cohort(Id),
+ );
+ 
+CREATE TABLE Exercise (
+  ID INTEGER NOT NULL PRIMARY KEY IDENTITY,
+  [name] VARCHAR(55),
+  [programLang] VARCHAR(55)
+ );
+
+CREATE TABLE Instructor (
+  ID INTEGER NOT NULL PRIMARY KEY IDENTITY,
+  [firstName] VARCHAR(55) NOT NULL,
+ [lastName] VARCHAR(55) NOT NULL,
+ [slackHandle] VARCHAR(55) NOT NULL,
+ [currentCohort] INTEGER NOT NULL,
+ CONSTRAINT FK_Instructor FOREIGN KEY(currentCohort) REFERENCES Cohort(Id),
+  );
+  
+ CREATE TABLE studentExercise (
+    ID INTEGER NOT NULL PRIMARY KEY IDENTITY,
+	[studentId] INTEGER NOT NULL,
+	[exerciseId] INTEGER NOT NULL,
+	CONSTRAINT FK_StudentExercise_studentId FOREIGN KEY(StudentId) REFERENCES student(Id),
+	CONSTRAINT FK_StudentExercise_exerciseId FOREIGN KEY(exerciseId) REFERENCES exercise(Id),
+
+  );
+
+```
