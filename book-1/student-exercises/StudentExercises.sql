@@ -58,3 +58,11 @@ CREATE TABLE Instructor (
   INSERT INTO Student (firstName, lastName, slackHandle, cohortId) VALUES ('Lucas', 'Fait', 'lucasfait', 2);
   INSERT INTO Student (firstName, lastName, slackHandle, cohortId) VALUES ('Jay', 'Sait', 'jaysait', 3);
   INSERT INTO Student (firstName, lastName, slackHandle, cohortId) VALUES ('Seth', 'Gait', 'sethgait', 1);
+
+
+  INSERT INTO Instructor (firstName, lastName, slackHandle, cohortId) VALUES ('Kim', 'Preece', 'kimpreece', 1);
+  INSERT INTO Instructor (firstName, lastName, slackHandle, cohortId) VALUES ('Josh', 'Joseph', 'joshjoseph', 2);
+  INSERT INTO Instructor (firstName, lastName, slackHandle, cohortId) VALUES ('Jordan', 'Castelloe', 'jcastelloe', 3);
+  INSERT INTO Instructor (firstName, lastName, slackHandle, cohortId) VALUES ('Steve', 'Jobs', 'stevejobs', 1);
+
+  
