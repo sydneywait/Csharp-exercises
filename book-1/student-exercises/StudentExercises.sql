@@ -65,4 +65,32 @@ CREATE TABLE Instructor (
   INSERT INTO Instructor (firstName, lastName, slackHandle, cohortId) VALUES ('Jordan', 'Castelloe', 'jcastelloe', 3);
   INSERT INTO Instructor (firstName, lastName, slackHandle, cohortId) VALUES ('Steve', 'Jobs', 'stevejobs', 1);
 
+  INSERT INTO Exercise (name, programLang) VALUES ('Urban Planner', 'C#');
+  INSERT INTO Exercise (name, programLang) VALUES ('Overly Excited', 'JavaScript');
+  INSERT INTO Exercise (name, programLang) VALUES ('Custom Types', 'C#');
+  INSERT INTO Exercise (name, programLang) VALUES ('Get Coffee', 'Java');
+
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (1,4);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (1,1);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (2,1);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (2,3);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (3,2);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (3,4);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (4,2);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (4,1);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (5,1);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (5,4);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (6,3);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (7,2);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (8,4);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (9,1);
+  INSERT INTO studentExercise (studentId, exerciseId) VALUES (10,2);
+
+   SELECT s.firstName, e.Name FROM StudentExercise se JOIN student s ON studentId = s.id JOIN Exercise e ON exerciseId = e.id;
+
+   SELECT id, name, programLang FROM Exercise;
+
+
+
+
   
