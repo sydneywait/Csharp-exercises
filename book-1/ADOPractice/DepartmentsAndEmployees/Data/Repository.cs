@@ -110,6 +110,7 @@ namespace DepartmentsAndEmployees.Data
                         {
                             Id = id,
                             DeptName = reader.GetString(reader.GetOrdinal("DeptName"))
+
                         };
                     }
 
