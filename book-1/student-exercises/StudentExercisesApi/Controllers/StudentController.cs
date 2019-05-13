@@ -112,34 +112,54 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = $@"SELECT i.Id, i.firstName, i.lastName, i.slackHandle, i.cohortId, c.name as 'cohortName' FROM Student i JOIN Cohort c ON i.cohortId = c.id WHERE i.id=@id";
+                    cmd.CommandText = $@"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id WHERE s.id=@id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    Student student = null;
+                    Student studentToDisplay = null;
+                    int counter = 0;
 
-                    if (reader.Read())
+                    while (reader.Read())
                     {
-                        student = new Student
+
+                        if (counter < 1) { 
+                        Student student = new Student
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Id = reader.GetInt32(reader.GetOrdinal("studentId")),
                             firstName = reader.GetString(reader.GetOrdinal("firstName")),
                             lastName = reader.GetString(reader.GetOrdinal("lastName")),
                             slackHandle = reader.GetString(reader.GetOrdinal("slackHandle")),
                             cohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
                             currentCohort = new Cohort(){ Id= reader.GetInt32(reader.GetOrdinal("cohortId")), name= reader.GetString(reader.GetOrdinal("cohortName"))},                       
                         };
+                            studentToDisplay = student;
+                            counter++;
+                        };
+
+                        Exercise exercise = new Exercise
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
+                            name = reader.GetString(reader.GetOrdinal("ExerciseName")),
+                            programLang = reader.GetString(reader.GetOrdinal("programLang"))
+                        };
+
+                        if (!studentToDisplay.exercises.Any(e => e.Id == exercise.Id))
+                        {
+                            studentToDisplay.exercises.Add(exercise);
+                        }
+
+
                     }
                     reader.Close();
 
-                    return Ok(student);
+                    return Ok(studentToDisplay);
                 }
             }
         }
 
         // POST: Code for creating a student
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Student student)
+        public async Task<IActionResult> PostStudent([FromBody] Student student)
         {
             using (SqlConnection conn = Connection)
             {
@@ -164,7 +184,7 @@ namespace StudentExercisesApi.Controllers
 
         //// PUT: Code for editing a student
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Student student)
+        public async Task<IActionResult> PutStudent([FromRoute] int id, [FromBody] Student student)
         {
             try
             {
@@ -209,7 +229,7 @@ namespace StudentExercisesApi.Controllers
 
         //// DELETE: Code for deleting an exercise
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> DeleteStudent([FromRoute] int id)
         {
             try
             {
