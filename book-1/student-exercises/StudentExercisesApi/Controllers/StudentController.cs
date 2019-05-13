@@ -33,7 +33,7 @@ namespace StudentExercisesApi.Controllers
 
         // GET:Code for getting a list of Students
         [HttpGet]
-        public async Task<IActionResult> GetAllStudents(string include)
+        public async Task<IActionResult> GetAllStudents(string include, string q)
         {
 
             using (SqlConnection conn = Connection)
@@ -41,7 +41,14 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id;";
+                    string commandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id";
+
+                    if (q != null)
+                    {
+                        commandText += $" WHERE s.firstName LIKE '{q}%' OR s.lastName LIKE '{q}%' or s.slackHandle LIKE '{q}%'";
+                    }
+
+                    cmd.CommandText = commandText;
 
                     //Student JSON response should have all exercises that are assigned to them if the include = exercise query string parameter is there.
 
