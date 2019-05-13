@@ -81,17 +81,19 @@ namespace StudentExercisesApi.Controllers
                         if (cohorts.Any(c => c.Id == cohort.Id))
                         {
                          Cohort cohortOnList = cohorts.Where(c => c.Id == cohort.Id).First();
-                            if (cohortOnList.students.Any(s => s.Id != student.Id))
+                            if (!cohortOnList.students.Any(s => s.Id == student.Id))
                             {
                                 cohortOnList.students.Add(student);
 
                             }
+                                                        
 
-                            if (cohortOnList.instructors.Any(i => i.Id != instructor.Id))
+                            if (!cohortOnList.instructors.Any(i => i.Id == instructor.Id))
                             {
                                  cohortOnList.instructors.Add(instructor);
 
                             }
+                            
                         }
                         else
                         {
