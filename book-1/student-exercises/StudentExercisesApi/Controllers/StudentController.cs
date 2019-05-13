@@ -33,7 +33,7 @@ namespace StudentExercisesApi.Controllers
 
         // GET:Code for getting a list of Students
         [HttpGet]
-        public async Task<IActionResult> GetAllStudents()
+        public async Task<IActionResult> GetAllStudents(string include)
         {
 
             using (SqlConnection conn = Connection)
@@ -43,17 +43,16 @@ namespace StudentExercisesApi.Controllers
                 {
                     cmd.CommandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id;";
 
+                    //Student JSON response should have all exercises that are assigned to them if the include = exercise query string parameter is there.
 
-                    //if statements that allow queries to be limited
-                    //                    if(limit! = null){$ SELECT TOP {limit} Id, firstName, lastName, slackHandle, cohortId FROM Student; 
-                    //                                           }
+
 
 
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Student> students = new List<Student>();
 
                     while (reader.Read())
-                    {                        
+                    {
 
                         {
                             Exercise exercise = new Exercise
@@ -73,21 +72,31 @@ namespace StudentExercisesApi.Controllers
                                 currentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")), name = reader.GetString(reader.GetOrdinal("cohortName")) },
 
                             };
-                          
-                            if (students.Any(s=>s.Id == student.Id))
+
+
+
+                            if (students.Any(s => s.Id == student.Id))
                             {
                                 Student studentOnList = students.Where(s => s.Id == student.Id).First();
-                                studentOnList.exercises.Add(exercise);
+                               if (include == "exercise")
+                                {
+                                    studentOnList.exercises.Add(exercise);
+                                }
                             }
                             else
                             {
-                                student.exercises.Add(exercise);
+                               if (include == "exercise")
+                                {
+                                    student.exercises.Add(exercise);
+                                }
                                 students.Add(student);
 
                             }
-
                         }
                     }
+                
+                        
+                    
                         reader.Close();
                     
 

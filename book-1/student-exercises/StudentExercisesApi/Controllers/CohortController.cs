@@ -67,7 +67,6 @@ namespace StudentExercisesApi.Controllers
                             lastName = reader.GetString(reader.GetOrdinal("studentLastName")),
                             slackHandle = reader.GetString(reader.GetOrdinal("studentSlackHandle")),
                             cohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
-                            currentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")), name = reader.GetString(reader.GetOrdinal("cohortName")) }
 
                         };
                         };
@@ -82,7 +81,6 @@ namespace StudentExercisesApi.Controllers
                                 lastName = reader.GetString(reader.GetOrdinal("instructorLastName")),
                                 slackHandle = reader.GetString(reader.GetOrdinal("instructorSlackHandle")),
                                 cohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
-                                currentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")), name = reader.GetString(reader.GetOrdinal("cohortName")) }
 
                             };
                         };
@@ -94,14 +92,12 @@ namespace StudentExercisesApi.Controllers
                             if (!cohortOnList.students.Any(s => s.Id == student.Id))
                             {
                                 cohortOnList.students.Add(student);
-
                             }
                                                         
 
                             if (!cohortOnList.instructors.Any(i => i.Id == instructor.Id))
                             {
                                  cohortOnList.instructors.Add(instructor);
-
                             }
                             
                         }
