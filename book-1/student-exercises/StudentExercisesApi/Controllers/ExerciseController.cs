@@ -32,7 +32,7 @@ namespace StudentExercisesApi.Controllers
         // GET:Code for getting a list of exercises
         [HttpGet]
 
-        public async Task<IActionResult> GetAllExercises(string include)
+        public async Task<IActionResult> GetAllExercises(string include, string q)
         {
             using (SqlConnection conn = Connection)
             {
@@ -47,7 +47,12 @@ namespace StudentExercisesApi.Controllers
                     }
                     else
                     {
-                        commandText = "SELECT Id as 'exerciseId', name AS 'exerciseName', programLang FROM Exercise";
+                        commandText = "SELECT e.Id as 'exerciseId', e.name AS 'exerciseName', e.programLang FROM Exercise e";
+                    }
+
+                    if (q != null)
+                    {
+                        commandText += $" WHERE e.name LIKE '{q}%' OR e.programLang LIKE '{q}%'";
                     }
 
                     cmd.CommandText = commandText;
