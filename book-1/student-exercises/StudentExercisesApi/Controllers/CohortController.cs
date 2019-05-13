@@ -33,7 +33,7 @@ namespace StudentExercisesApi.Controllers
 
         //        // GET:Code for getting a list of Cohorts
         [HttpGet]
-        public async Task<IActionResult> GetAllCohorts()
+        public async Task<IActionResult> GetAllCohorts(string q)
         {
 
             using (SqlConnection conn = Connection)
@@ -41,9 +41,16 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    //cmd.CommandText = $"SELECT s.id AS 'studentId', s.firstName AS 'studentFirstName', s.lastName AS 'studentLastName', s.slackHandle AS 'studentSlackHandle', i.id AS 'instructorId', i.firstname AS 'instructorFirstName', i.lastName AS 'instructorLastName', i.slackHandle AS 'instructorSlackHandle', c.id AS 'cohortId', c.Name AS 'cohortName' FROM Cohort c Left JOIN Student s on c.id = s.cohortId Right JOIN Instructor i ON c.id = i.cohortId";
-                    cmd.CommandText = $"SELECT s.id AS 'studentId', s.firstName AS 'studentFirstName', s.lastName AS 'studentLastName', s.slackHandle AS 'studentSlackHandle', i.id AS 'instructorId', i.firstname AS 'instructorFirstName', i.lastName AS 'instructorLastName', i.slackHandle AS 'instructorSlackHandle', c.id AS 'cohortId', c.Name AS 'cohortName' FROM Cohort c Full JOIN Student s on c.id = s.cohortId Full JOIN Instructor i ON c.id = i.cohortId";
+                    string commandText = $"SELECT s.id AS 'studentId', s.firstName AS 'studentFirstName', s.lastName AS 'studentLastName', s.slackHandle AS 'studentSlackHandle', i.id AS 'instructorId', i.firstname AS 'instructorFirstName', i.lastName AS 'instructorLastName', i.slackHandle AS 'instructorSlackHandle', c.id AS 'cohortId', c.Name AS 'cohortName' FROM Cohort c Full JOIN Student s on c.id = s.cohortId Full JOIN Instructor i ON c.id = i.cohortId";
 
+                    if (q!=null)
+                    {
+                        commandText += $" WHERE c.Name LIKE '{q}%'";
+                    }
+
+                    cmd.CommandText = commandText;
+                        
+                        
 
 
                     SqlDataReader reader = cmd.ExecuteReader();

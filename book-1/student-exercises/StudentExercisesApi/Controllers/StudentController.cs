@@ -78,14 +78,14 @@ namespace StudentExercisesApi.Controllers
                             if (students.Any(s => s.Id == student.Id))
                             {
                                 Student studentOnList = students.Where(s => s.Id == student.Id).First();
-                               if (include == "exercise")
+                               if (include == "exercises")
                                 {
                                     studentOnList.exercises.Add(exercise);
                                 }
                             }
                             else
                             {
-                               if (include == "exercise")
+                               if (include == "exercises")
                                 {
                                     student.exercises.Add(exercise);
                                 }
@@ -111,7 +111,7 @@ namespace StudentExercisesApi.Controllers
 
         //GET: Code for getting a single student
        [HttpGet("{id}", Name = "Student")]
-            public async Task<IActionResult> GetSingleStudent([FromRoute] int id)
+            public async Task<IActionResult> GetSingleStudent([FromRoute] int id, string include)
         {
 
         
@@ -145,18 +145,22 @@ namespace StudentExercisesApi.Controllers
                             counter++;
                         };
 
-                        Exercise exercise = new Exercise
+                        if (include == "exercises")
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
-                            name = reader.GetString(reader.GetOrdinal("ExerciseName")),
-                            programLang = reader.GetString(reader.GetOrdinal("programLang"))
-                        };
+                            Exercise exercise = new Exercise
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
+                                name = reader.GetString(reader.GetOrdinal("ExerciseName")),
+                                programLang = reader.GetString(reader.GetOrdinal("programLang"))
+                            };
 
-                        if (!studentToDisplay.exercises.Any(e => e.Id == exercise.Id))
-                        {
-                            studentToDisplay.exercises.Add(exercise);
+                            if (!studentToDisplay.exercises.Any(e => e.Id == exercise.Id))
+                            {
+
+                                studentToDisplay.exercises.Add(exercise);
+
+                            }
                         }
-
 
                     }
                     reader.Close();

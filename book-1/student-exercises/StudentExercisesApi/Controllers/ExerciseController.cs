@@ -32,27 +32,73 @@ namespace StudentExercisesApi.Controllers
         // GET:Code for getting a list of exercises
         [HttpGet]
 
-        public async Task<IActionResult> GetAllExercises()
+        public async Task<IActionResult> GetAllExercises(string include)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT Id, name, programLang FROM Exercise";
+                    string commandText = "";
+                    if (include == "students")
+                    {
+                        commandText = "SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'exerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id";
+
+                    }
+                    else
+                    {
+                        commandText = "SELECT Id as 'exerciseId', name AS 'exerciseName', programLang FROM Exercise";
+                    }
+
+                    cmd.CommandText = commandText;
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Exercise> exercises= new List<Exercise>();
 
                     while (reader.Read())
                     {
+                        
+
                         Exercise exercise = new Exercise
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            name = reader.GetString(reader.GetOrdinal("name")),
+                            Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
+                            name = reader.GetString(reader.GetOrdinal("exercisename")),
                             programLang = reader.GetString(reader.GetOrdinal("programLang"))
+                            
                         };
 
-                        exercises.Add(exercise);
+                        if (include == "students")
+                        {
+
+                            Student student = new Student
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("studentId")),
+                                firstName = reader.GetString(reader.GetOrdinal("firstName")),
+                                lastName = reader.GetString(reader.GetOrdinal("lastName")),
+                                slackHandle = reader.GetString(reader.GetOrdinal("slackHandle")),
+                                cohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
+                                currentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")), name = reader.GetString(reader.GetOrdinal("cohortName")) }
+                            };
+
+                            if (exercises.Any(e => e.Id == exercise.Id))
+                            {
+                                Exercise exerciseOnList = exercises.Where(e => e.Id == exercise.Id).First();
+                                if (!exerciseOnList.assignedStudents.Any(s => s.Id == student.Id))
+                                {
+                                    exerciseOnList.assignedStudents.Add(student);
+                                    
+                                }
+
+                            }
+                            else
+                            {
+                                exercises.Add(exercise);
+                            }
+                        }
+
+                        else
+                        {
+                            exercises.Add(exercise);
+                        }
                     }
                     reader.Close();
 
