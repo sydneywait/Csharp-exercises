@@ -34,7 +34,7 @@ namespace StudentExercisesApi.Controllers
 
         // GET:Code for getting a list of Instructors
         [HttpGet]
-        public async Task<IActionResult> GetAllInstructors()
+        public async Task<IActionResult> GetAllInstructors(string q)
         {
 
             using (SqlConnection conn = Connection)
@@ -42,13 +42,18 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = $"SELECT i.Id, i.firstName, i.lastName, i.slackHandle, i.cohortId, c.name as 'cohortName' FROM Instructor i JOIN Cohort c ON i.cohortId = c.id";
+                    
+                        
+                        string commandText=$"SELECT i.Id, i.firstName, i.lastName, i.slackHandle, i.cohortId, c.name as 'cohortName' FROM Instructor i JOIN Cohort c ON i.cohortId = c.id";
+
+                    if (q != null)
+                    {
+                        commandText += $" WHERE i.firstName LIKE '{q}%' OR i.lastName LIKE '{q}%' or i.slackHandle LIKE '{q}%'";
+                    }
 
 
-                    //if statements that allow queries to be limited
-                    //                    if(limit! = null){$ SELECT TOP {limit} Id, firstName, lastName, slackHandle, cohortId FROM Instructor; 
-                    //                                           }
-
+                   
+                    cmd.CommandText = commandText;
 
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Instructor> instructors = new List<Instructor>();
