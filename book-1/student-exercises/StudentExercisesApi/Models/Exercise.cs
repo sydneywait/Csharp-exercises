@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentExercisesApi.Models
 {
@@ -9,7 +10,9 @@ namespace StudentExercisesApi.Models
         {
                 
         public int Id { get; set; }
+        [Required]  
         public string name { get; set; }
+        [Required]
         public string programLang { get; set; }
 
         public List<Student> assignedStudents = new List<Student>();

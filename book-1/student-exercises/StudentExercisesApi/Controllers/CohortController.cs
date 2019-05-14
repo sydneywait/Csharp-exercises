@@ -253,8 +253,7 @@ namespace StudentExercisesApi.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"UPDATE Cohort
-                                                    SET name = @name                                                        
-                                                    WHERE id = @id";
+                                                    SET name = @name                                                              WHERE id = @id";
                         cmd.Parameters.Add(new SqlParameter("@name", cohort.name));
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 

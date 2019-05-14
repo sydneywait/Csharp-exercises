@@ -41,9 +41,15 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    string commandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id";
+                    string commandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName' FROM student s JOIN cohort c on s.cohortId = c.id";
 
-                    if (q != null)
+                    if (include == "exercises")
+                    {
+                        commandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id";
+                    }
+
+
+                        if (q != null)
                     {
                         commandText += $" WHERE s.firstName LIKE '{q}%' OR s.lastName LIKE '{q}%' or s.slackHandle LIKE '{q}%'";
                     }
@@ -57,17 +63,20 @@ namespace StudentExercisesApi.Controllers
 
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<Student> students = new List<Student>();
+                    Exercise exercise = null;
 
                     while (reader.Read())
                     {
 
                         {
-                            Exercise exercise = new Exercise
+                            if(include == "exercises") { 
+                            exercise = new Exercise 
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
                                 name = reader.GetString(reader.GetOrdinal("ExerciseName")),
                                 programLang = reader.GetString(reader.GetOrdinal("programLang"))
                             };
+                            }
 
                             Student student = new Student
                             {
@@ -128,7 +137,19 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = $@"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id WHERE s.id=@id";
+                    
+                        
+                        string commandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName' FROM student s JOIN cohort c on s.cohortId = c.id WHERE s.id=@id";
+
+                    if (include == "exercises")
+                    {
+                        commandText = $@"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id WHERE s.id=@id";
+
+                    }
+
+                    cmd.CommandText = commandText;
+
+
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -186,11 +207,11 @@ namespace StudentExercisesApi.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Student (firstName, lastName, slackHandle, cohortId)
+                    cmd.CommandText = $@"INSERT INTO Student (firstName, lastName, slackHandle, cohortId)
                                         OUTPUT INSERTED.Id
-                                        VALUES (@firstName, @lastName, @slackHandle, @cohortId)";
+                                        VALUES (@firstName, '{student.lastName}', @slackHandle, @cohortId)";
                     cmd.Parameters.Add(new SqlParameter("@firstName", student.firstName));
-                    cmd.Parameters.Add(new SqlParameter("@lastName", student.lastName));
+                    //cmd.Parameters.Add(new SqlParameter("@lastName", student.lastName));
                     cmd.Parameters.Add(new SqlParameter("@slackHandle", student.slackHandle));
                     cmd.Parameters.Add(new SqlParameter("@cohortId", student.cohortId));
 

@@ -11,22 +11,23 @@ namespace StudentExercisesApi.Models
 
         public int Id { get; set; }
         [Required]
+        [StringLength(11, MinimumLength = 5)]
         public string name { get; set; }
 
         public List<Student> students = new List<Student>();
         public List<Instructor> instructors = new List<Instructor>();
 
         // Enroll student by individual or by list (polymorphism)
-        public void enrollStudent(Student newStudent)
+        public void EnrollStudent(Student newStudent)
         {
             newStudent.currentCohort = this;
             students.Add(newStudent);
         }
-        public void enrollStudent(List<Student> newStudents)
+        public void EnrollStudent(List<Student> newStudents)
         {
             foreach (Student currentStudent in newStudents)
             {
-                enrollStudent(currentStudent);
+                EnrollStudent(currentStudent);
             }
         }
 
