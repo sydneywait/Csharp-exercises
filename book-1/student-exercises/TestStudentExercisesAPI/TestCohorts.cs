@@ -46,7 +46,7 @@ namespace TestStudentExercisesAPI
 
         }
 
-        // Delete an cohort in the database and make sure we get a no content status code back
+        // Delete a cohort in the database and make sure we get a no content status code back
         public async Task deleteCohort(Cohort cohort, HttpClient client)
         {
             HttpResponseMessage deleteResponse = await client.DeleteAsync($"api/cohort/{cohort.Id}");
