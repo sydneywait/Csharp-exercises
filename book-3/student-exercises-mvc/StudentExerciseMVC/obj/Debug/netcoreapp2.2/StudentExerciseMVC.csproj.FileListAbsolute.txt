@@ -47,3 +47,4 @@ C:\Users\newforce\workspace\Csharp-exercises\book-3\student-exercises-mvc\Studen
 C:\Users\newforce\workspace\Csharp-exercises\book-3\student-exercises-mvc\StudentExerciseMVC\obj\Debug\netcoreapp2.2\Razor\Views\Students\Create.g.cshtml.cs
 C:\Users\newforce\workspace\Csharp-exercises\book-3\student-exercises-mvc\StudentExerciseMVC\obj\Debug\netcoreapp2.2\Razor\Views\Instructors\Create.g.cshtml.cs
 C:\Users\newforce\workspace\Csharp-exercises\book-3\student-exercises-mvc\StudentExerciseMVC\obj\Debug\netcoreapp2.2\Razor\Views\Cohorts\Create.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-3\student-exercises-mvc\StudentExerciseMVC\obj\Debug\netcoreapp2.2\Razor\Views\Exercises\Create.g.cshtml.cs

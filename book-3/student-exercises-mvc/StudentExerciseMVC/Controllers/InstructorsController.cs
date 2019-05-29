@@ -174,8 +174,6 @@ namespace StudentExerciseMVC.Controllers
 
                     while (reader.Read())
                     {
-
-
                         Instructor instructor = new Instructor
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("instructorId")),
@@ -190,8 +188,15 @@ namespace StudentExerciseMVC.Controllers
                         instructorToEdit = instructor;
                     }
                     reader.Close();
+                    //Create an instance of your InstructorEditViewModel
+                    EditInstructorViewModel instructorViewModel = new EditInstructorViewModel
+                (_config.GetConnectionString("DefaultConnection"));
+        
+                    //Assign the instructor you created to the.Instructor property of your view model
+                    instructorViewModel.instructor = instructorToEdit;
 
-                    return View(instructorToEdit);
+                    
+                    return View(instructorViewModel);
                 }
             }
         }

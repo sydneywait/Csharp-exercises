@@ -217,7 +217,15 @@ namespace StudentExerciseMVC.Controllers
                     }
                     reader.Close();
 
-                    return View(studentToEdit);
+                    //Create an instance of your StudentEditViewModel
+                    EditStudentViewModel studentViewModel = new EditStudentViewModel
+                (_config.GetConnectionString("DefaultConnection"));
+
+                    //Assign the student you created to the.Student property of your view model
+                    studentViewModel.student = studentToEdit;
+
+
+                    return View(studentViewModel);
                 }
             }
         }
