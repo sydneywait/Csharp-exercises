@@ -219,7 +219,7 @@ namespace StudentExerciseMVC.Controllers
 
                     //Create an instance of your StudentEditViewModel
                     EditStudentViewModel studentViewModel = new EditStudentViewModel
-                (_config.GetConnectionString("DefaultConnection"));
+                (_config.GetConnectionString("DefaultConnection"), id);
 
                     //Assign the student you created to the.Student property of your view model
                     studentViewModel.student = studentToEdit;

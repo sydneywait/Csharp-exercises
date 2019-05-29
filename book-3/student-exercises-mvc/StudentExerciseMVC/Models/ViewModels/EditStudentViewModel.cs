@@ -11,6 +11,11 @@ namespace StudentExerciseMVC.Models.ViewModels
     {
 
         public List<SelectListItem> Cohorts { get; set; }
+        public List<SelectListItem> Exercises { get; set; }
+        public List<StudentExercise> AssignedExercises { get; set; }
+        public List<int> exerciseIds { get; set; }
+        //need to make a list of the assigned integers as come back from the form
+
         public Student student { get; set; }
 
         private string _connectionString;
@@ -25,7 +30,7 @@ namespace StudentExerciseMVC.Models.ViewModels
 
         public EditStudentViewModel() { }
 
-        public EditStudentViewModel(string connectionString)
+        public EditStudentViewModel(string connectionString, int id)
         {
             _connectionString = connectionString;
 
@@ -42,7 +47,23 @@ namespace StudentExerciseMVC.Models.ViewModels
                 Text = "Choose cohort...",
                 Value = "0"
             });
-        }
+
+            AssignedExercises = GetAllExercisesForThisStudent(id);
+
+            Exercises = GetAllExercises()
+                .Select(exercise => new SelectListItem
+                {
+                    Text = exercise.Name,
+                    Value = exercise.Id.ToString(),
+                    Selected = AssignedExercises.Any(e => e.ExerciseId == exercise.Id) ? true : false
+
+                })      
+
+                .ToList();
+
+                   }
+
+                       
 
         private List<Cohort> GetAllCohorts()
         {
@@ -67,6 +88,64 @@ namespace StudentExerciseMVC.Models.ViewModels
                     reader.Close();
 
                     return cohorts;
+                }
+            }
+        }
+
+        private List<Exercise> GetAllExercises()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name, ProgramLang FROM Exercise";
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Exercise> exercises = new List<Exercise>();
+                    while (reader.Read())
+                    {
+                        exercises.Add(new Exercise
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            ProgramLang = reader.GetString(reader.GetOrdinal("ProgramLang")),
+
+                        });
+                    }
+
+                    reader.Close();
+
+                    return exercises;
+                }
+            }
+        }
+
+        private List<StudentExercise> GetAllExercisesForThisStudent(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = $"SELECT Id, StudentId, ExerciseId FROM StudentExercise WHERE StudentId = {id}";
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<StudentExercise> assignedExercises = new List<StudentExercise>();
+                    while (reader.Read())
+                    {
+                        assignedExercises.Add(new StudentExercise
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            StudentId = reader.GetInt32(reader.GetOrdinal("StudentId")),
+                            ExerciseId = reader.GetInt32(reader.GetOrdinal("ExerciseId")),
+
+                        });
+                    }
+
+                    reader.Close();
+
+                    return assignedExercises;
                 }
             }
         }

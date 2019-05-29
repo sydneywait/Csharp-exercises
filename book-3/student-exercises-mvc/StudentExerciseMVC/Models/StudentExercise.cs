@@ -11,6 +11,5 @@ namespace StudentExerciseMVC.Models
         public int Id { get; set; }
         public int StudentId { get; set; }
         public int ExerciseId { get; set; }
-        public int InstructorId { get; set; }
     }
 }
