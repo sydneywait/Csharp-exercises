@@ -11,10 +11,11 @@ SELECT e.id, e.[Name], COUNT(CASE WHEN se.isComplete = 1 THEN 1 END ) as 'number
 
 --For each exercise that has been assigned to any student(s), produce a report that shows which percentage of students have completed it.
 
-SELECT sq.[exercise id], sq.[exercise name], sq.[number assigned], sq.[number completed], cast(sq.[number completed] as decimal(4,1)) / cast(sq.[number assigned] as decimal(4,1)) as 'percent completed' FROM
+SELECT sq.[exercise id], sq.[exercise name], sq.[number assigned], sq.[number completed], COALESCE (cast(sq.[number completed] as decimal(4,1)) / NULLIF(cast(sq.[number assigned] as decimal(4,1)),0),0) as 'percent completed' FROM
 (
 SELECT e.id as 'exercise id', e.[Name] as 'exercise name', COUNT(se.isComplete) as 'number assigned', COUNT(CASE WHEN se.isComplete = 1 THEN 1 END ) as 'number completed' FROM studentExercise se LEFT JOIN student s on se.studentId = s.id FULL JOIN Exercise e on se.exerciseId = e.ID GROUP BY e.[Name], e.id
-) sq WHERE sq.[exercise Id] = 1
+) sq 
+WHERE sq.[exercise Id] = 13 
 --GROUP BY sq.[exercise id], sq.[exercise name]
 
 

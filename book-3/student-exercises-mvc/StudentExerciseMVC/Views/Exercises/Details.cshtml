@@ -32,8 +32,11 @@
         </dd>
     </dl>
 
-    <p>@Html.DisplayNameFor(model => model.NumberAssigned) </p>
-    <p>@Html.DisplayFor(model => model.NumberAssigned) </p>
+    <p>Number of Students Assigned: @Html.DisplayFor(model => model.NumberAssigned) </p>
+    <p>Number of Students Completed: @Html.DisplayFor(model => model.NumberCompleted) </p>
+
+    <p>Percent Completed: @Html.DisplayFor(model => model.PercentCompleted) </p>
+
 
 </div>
 <div>
