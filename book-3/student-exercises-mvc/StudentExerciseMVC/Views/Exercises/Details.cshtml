@@ -1,4 +1,6 @@
-﻿@model StudentExerciseMVC.Models.Exercise
+﻿@model StudentExerciseMVC.Models.ViewModels.DetailExerciseViewModel
+
+
 
 @{
     ViewData["Title"] = "Details";
@@ -10,27 +12,31 @@
     <h4>Exercise</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.exercise.Id)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.exercise.Id)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.exercise.Name)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.exercise.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProgramLang)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.exercise.ProgramLang)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProgramLang)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.exercise.ProgramLang)
         </dd>
     </dl>
+
+    <p>@Html.DisplayNameFor(model => model.NumberAssigned) </p>
+    <p>@Html.DisplayFor(model => model.NumberAssigned) </p>
+
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.exercise.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>

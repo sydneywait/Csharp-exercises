@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using StudentExerciseMVC.Models;
+using StudentExerciseMVC.Models.ViewModels;
 
 namespace ExerciseExercisesMVC.Controllers
 {
@@ -110,8 +111,14 @@ namespace ExerciseExercisesMVC.Controllers
 
                     }
                     reader.Close();
+                    //Create an instance of your StudentEditViewModel
+                    DetailExerciseViewModel exerciseViewModel = new DetailExerciseViewModel
+                (_config.GetConnectionString("DefaultConnection"), id);
 
-                    return View(exerciseToDisplay);
+                    //Assign the student you created to the.Student property of your view model
+                    exerciseViewModel.exercise = exerciseToDisplay;
+
+                    return View(exerciseViewModel);
                 }
             }
         }
