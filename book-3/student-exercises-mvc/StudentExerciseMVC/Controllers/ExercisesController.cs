@@ -302,19 +302,25 @@ namespace ExerciseExercisesMVC.Controllers
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
+
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM StudentExercise WHERE ExerciseId = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        
+                    }
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"DELETE FROM Exercise WHERE Id = @id";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            return RedirectToAction(nameof(Index));
-                        }
-                        throw new Exception("No rows affected");
+                       
                     }
                 }
+                return RedirectToAction(nameof(Index));
 
 
             }

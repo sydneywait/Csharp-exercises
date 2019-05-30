@@ -86,7 +86,7 @@ namespace StudentExerciseMVC.Controllers
 
 
 
-                    string commandText = $@"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se JOIN Exercise e on se.exerciseId=e.id JOIN Student s on se.studentId=s.id JOIN Cohort c on s.cohortId = c.id WHERE s.id=@id";
+                    string commandText = $@"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se FULL JOIN Exercise e on se.exerciseId=e.id FULL JOIN Student s on se.studentId=s.id FULL JOIN Cohort c on s.cohortId = c.id WHERE s.id=@id";
 
 
 
@@ -117,19 +117,21 @@ namespace StudentExerciseMVC.Controllers
                             counter++;
                         };
 
-
-                        Exercise exercise = new Exercise
+                        if (!reader.IsDBNull(reader.GetOrdinal("exerciseId")))
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
-                            Name = reader.GetString(reader.GetOrdinal("ExerciseName")),
-                            ProgramLang = reader.GetString(reader.GetOrdinal("programLang"))
-                        };
+                            Exercise exercise = new Exercise
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("exerciseId")),
+                                Name = reader.GetString(reader.GetOrdinal("ExerciseName")),
+                                ProgramLang = reader.GetString(reader.GetOrdinal("programLang"))
+                            };
 
-                        if (!studentToDisplay.exercises.Any(e => e.Id == exercise.Id))
-                        {
+                            if (!studentToDisplay.exercises.Any(e => e.Id == exercise.Id))
+                            {
 
-                            studentToDisplay.exercises.Add(exercise);
+                                studentToDisplay.exercises.Add(exercise);
 
+                            }
                         }
 
 
@@ -233,55 +235,94 @@ namespace StudentExerciseMVC.Controllers
         // POST: Students/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Student student)
+        public ActionResult Edit(int id, EditStudentViewModel studentView)
         {
-            try
-            {
+            //try
+            //{
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = @"UPDATE Student
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Student
                                             SET firstName = @firstName,
                                                 lastName = @lastName,
                                                 slackHandle = @slackHandle,
                                                 cohortId = @cohortId
                                             WHERE Id = @id";
-                        cmd.Parameters.Add(new SqlParameter("@firstName", student.FirstName));
-                        cmd.Parameters.Add(new SqlParameter("@lastName", student.LastName));
-                        cmd.Parameters.Add(new SqlParameter("@slackHandle", student.SlackHandle));
-                        cmd.Parameters.Add(new SqlParameter("@cohortId", student.CohortId));
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                    cmd.Parameters.Add(new SqlParameter("@firstName", studentView.student.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@lastName", studentView.student.LastName));
+                    cmd.Parameters.Add(new SqlParameter("@slackHandle", studentView.student.SlackHandle));
+                    cmd.Parameters.Add(new SqlParameter("@cohortId", studentView.student.CohortId));
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                        
+                    cmd.ExecuteNonQuery();
 
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+
+                }
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM StudentExercise WHERE StudentId = @id";
+                 cmd.Parameters.Add(new SqlParameter("@id", id));
+                    cmd.ExecuteNonQuery();
+
+
+                }
+               
+                    if(studentView.exerciseIds.Count() > 0) { 
+                    foreach (int e in studentView.exerciseIds)
+                    {
+                        using (SqlCommand cmd = conn.CreateCommand())
                         {
-                            //return new StatusCodeResult(StatusCodes.Status204NoContent);
-                            return RedirectToAction(nameof(Index));
+                            cmd.CommandText = @"INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (@StudentId, @ExerciseId)";
+
+                        cmd.Parameters.Add(new SqlParameter("@StudentId", id));
+                        cmd.Parameters.Add(new SqlParameter("@ExerciseId", e));
+                        cmd.ExecuteNonQuery();
 
                         }
-                        throw new Exception("No rows affected");
-
                     }
+
+
+
                 }
+                return RedirectToAction(nameof(Index));
+
+
+
+
+
+
+
+
+
+
 
             }
-            catch(Exception)
-            {
-                {
-                    if (!StudentExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+
+
+
+
+
+
+            //}
+            //catch(Exception)
+            //{
+            //    {
+            //        if (!StudentExists(id))
+            //        {
+            //            return NotFound();
+            //        }
+            //        else
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //}
+
+
         }
 
         // GET: Students/Delete/5
@@ -316,7 +357,8 @@ namespace StudentExerciseMVC.Controllers
                             LastName = reader.GetString(reader.GetOrdinal("lastName")),
                             SlackHandle = reader.GetString(reader.GetOrdinal("slackHandle")),
                             CohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
-                            CurrentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")), Name = reader.GetString(reader.GetOrdinal("cohortName")) }
+                            CurrentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")),
+                            Name = reader.GetString(reader.GetOrdinal("cohortName")) }
 
                         };
 
@@ -339,20 +381,31 @@ namespace StudentExerciseMVC.Controllers
                 using (SqlConnection conn = Connection)
                 {
                     conn.Open();
+
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
+                        cmd.CommandText = @"DELETE FROM StudentExercise WHERE studentId = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                    }
+
+
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                       
+                    
+
                         cmd.CommandText = @"DELETE FROM Student WHERE Id = @id";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         int rowsAffected = cmd.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
-                            return RedirectToAction(nameof(Index));
-                        }
-                        throw new Exception("No rows affected");
+                        
                     }
                 }
-            
+
+                return RedirectToAction(nameof(Index));
 
             }
             catch
