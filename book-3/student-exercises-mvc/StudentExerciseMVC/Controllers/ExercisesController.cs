@@ -94,7 +94,6 @@ namespace ExerciseExercisesMVC.Controllers
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Exercise exerciseToDisplay = null;
-                    int counter = 0;
 
                     while (reader.Read())
                     {
