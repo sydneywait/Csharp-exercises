@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using StudentExerciseMVC.Models;
+using StudentExerciseMVC.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using StudentExerciseMVC.Models.ViewModels;
-using StudentExerciseMVC.Models;
 
 namespace StudentExerciseMVC.Controllers
 {
@@ -82,10 +82,6 @@ namespace StudentExerciseMVC.Controllers
                 {
 
 
-                    //string commandText = $"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName' FROM student s JOIN cohort c on s.cohortId = c.id WHERE s.id=@id";
-
-
-
                     string commandText = $@"SELECT s.id as 'studentId', s.firstName, s.lastName, s.slackHandle, s.cohortId, c.name AS 'cohortName', e.id AS 'exerciseId', e.name as 'ExerciseName', e.programLang  FROM studentExercise se FULL JOIN Exercise e on se.exerciseId=e.id FULL JOIN Student s on se.studentId=s.id FULL JOIN Cohort c on s.cohortId = c.id WHERE s.id=@id";
 
 
@@ -111,7 +107,8 @@ namespace StudentExerciseMVC.Controllers
                                 LastName = reader.GetString(reader.GetOrdinal("lastName")),
                                 SlackHandle = reader.GetString(reader.GetOrdinal("slackHandle")),
                                 CohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
-                                CurrentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")), Name = reader.GetString(reader.GetOrdinal("cohortName")) }
+                                CurrentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")),
+                                Name = reader.GetString(reader.GetOrdinal("cohortName")) }
                             };
                             studentToDisplay = student;
                             counter++;
@@ -137,8 +134,11 @@ namespace StudentExerciseMVC.Controllers
 
                     }
                     reader.Close();
+                    DetailStudentViewModel studentViewModel = new DetailStudentViewModel
+               (_config.GetConnectionString("DefaultConnection"), id);
 
-                    return View(studentToDisplay);
+                    studentViewModel.student = studentToDisplay;
+                    return View(studentViewModel);
                 }
             }
         }
@@ -175,7 +175,7 @@ namespace StudentExerciseMVC.Controllers
 
                     return RedirectToAction(nameof(Index));
                 }
-                   
+
             }
         }
 
@@ -199,7 +199,7 @@ namespace StudentExerciseMVC.Controllers
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Student studentToEdit = null;
-                   
+
                     while (reader.Read())
                     {
 
@@ -239,9 +239,9 @@ namespace StudentExerciseMVC.Controllers
         {
             //try
             //{
-                using (SqlConnection conn = Connection)
-                {
-                    conn.Open();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Student
@@ -262,68 +262,75 @@ namespace StudentExerciseMVC.Controllers
 
 
                 }
+                //initiate a list of student exercise ids for this student
+                List<int> prevAssignedExerciseIds = new List<int>();
+
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"DELETE FROM StudentExercise WHERE StudentId = @id";
-                 cmd.Parameters.Add(new SqlParameter("@id", id));
+                    cmd.CommandText = @"SELECT id, exerciseId, studentId FROM studentExercise WHERE studentId = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
                     cmd.ExecuteNonQuery();
 
+                    SqlDataReader reader = cmd.ExecuteReader();
 
+
+                    while (reader.Read())
+                    {
+                        int prevAssignedExerciseId = reader.GetInt32(reader.GetOrdinal("exerciseId"));
+                        prevAssignedExerciseIds.Add(prevAssignedExerciseId);
+
+                    }
+                    reader.Close();
                 }
-               
-                    if(studentView.exerciseIds.Count() > 0) { 
-                    foreach (int e in studentView.exerciseIds)
+
+
+                List<int> currentNotPrev = studentView.exerciseIds.Except(prevAssignedExerciseIds).ToList();
+                List<int> prevNotCurrent = prevAssignedExerciseIds.Except(studentView.exerciseIds).ToList();
+
+
+                //If it was on the list but now is not, delete it 
+
+                if (prevNotCurrent.Count() > 0)
+                {
+                    foreach (int e in prevNotCurrent)
                     {
                         using (SqlCommand cmd = conn.CreateCommand())
                         {
-                            cmd.CommandText = @"INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (@StudentId, @ExerciseId)";
 
-                        cmd.Parameters.Add(new SqlParameter("@StudentId", id));
-                        cmd.Parameters.Add(new SqlParameter("@ExerciseId", e));
-                        cmd.ExecuteNonQuery();
+                            cmd.CommandText = @"DELETE FROM StudentExercise WHERE StudentId = @id AND ExerciseId = @exerciseId";
+                            cmd.Parameters.Add(new SqlParameter("@id", id));
+                            cmd.Parameters.Add(new SqlParameter("@exerciseId", e));
+                            cmd.ExecuteNonQuery();
 
                         }
                     }
+                }
+                //If it wasn't on the previous list, add it 
 
+                if (currentNotPrev.Count() > 0)
+                {
+                    {
+                        foreach (int e in currentNotPrev)
+                        {
+                            using (SqlCommand cmd = conn.CreateCommand())
+                            {
+                                cmd.CommandText = @"INSERT INTO StudentExercise (StudentId, ExerciseId, isComplete) VALUES (@studentId, @exerciseId, 0)";
 
+                                cmd.Parameters.Add(new SqlParameter("@studentId", id));
+                                cmd.Parameters.Add(new SqlParameter("@exerciseId", e));
+                                cmd.ExecuteNonQuery();
 
+                            }
+                        }
+                    }
                 }
                 return RedirectToAction(nameof(Index));
 
-
-
-
-
-
-
-
-
-
-
             }
-
-
-
-
-
-
-            //}
-            //catch(Exception)
-            //{
-            //    {
-            //        if (!StudentExists(id))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //}
-
-
         }
+
+
 
         // GET: Students/Delete/5
         public ActionResult Delete(int id)
@@ -357,8 +364,11 @@ namespace StudentExerciseMVC.Controllers
                             LastName = reader.GetString(reader.GetOrdinal("lastName")),
                             SlackHandle = reader.GetString(reader.GetOrdinal("slackHandle")),
                             CohortId = reader.GetInt32(reader.GetOrdinal("cohortId")),
-                            CurrentCohort = new Cohort() { Id = reader.GetInt32(reader.GetOrdinal("cohortId")),
-                            Name = reader.GetString(reader.GetOrdinal("cohortName")) }
+                            CurrentCohort = new Cohort()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("cohortId")),
+                                Name = reader.GetString(reader.GetOrdinal("cohortName"))
+                            }
 
                         };
 
@@ -370,6 +380,7 @@ namespace StudentExerciseMVC.Controllers
                 }
             }
         }
+
 
         // POST: Students/Delete/5
         [HttpPost]
@@ -394,14 +405,14 @@ namespace StudentExerciseMVC.Controllers
 
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                       
-                    
+
+
 
                         cmd.CommandText = @"DELETE FROM Student WHERE Id = @id";
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         int rowsAffected = cmd.ExecuteNonQuery();
-                        
+
                     }
                 }
 
@@ -439,6 +450,8 @@ namespace StudentExerciseMVC.Controllers
                 }
             }
         }
+
+        // PATCH: Students/Delete/5
 
     }
 }
