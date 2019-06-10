@@ -10,30 +10,56 @@
     <h4>Student</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FirstName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LastName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LastName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.SlackHandle)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.SlackHandle)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Cohort)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Cohort.Name)
         </dd>
+    </dl>
+    <dl>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.StudentExercises)
+    </dt>
+    <dd class="col-sm-10">
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Programming Language</th>
+                
+            </tr>
+            @foreach (var item in Model.StudentExercises)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Exercise.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Exercise.Language)
+                    </td>
+                    
+                </tr>
+            }
+        </table>
+    </dd>
     </dl>
 </div>
 <div>

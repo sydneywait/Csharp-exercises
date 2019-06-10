@@ -15,6 +15,7 @@ namespace StudentExercisesEF.Models
         [Required]
         public int CohortId { get; set; }
         public Cohort Cohort { get; set; }
+        [Display(Name = "Assigned Exercises")]
         public List<StudentExercise> StudentExercises { get; set; } = new List<StudentExercise>();
     }
 }

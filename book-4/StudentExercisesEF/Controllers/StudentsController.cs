@@ -36,6 +36,8 @@ namespace StudentExercisesEF.Controllers
 
             var student = await _context.Student
                 .Include(s => s.Cohort)
+                .Include(s=>s.StudentExercises)
+                .ThenInclude(se=>se.Exercise)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
