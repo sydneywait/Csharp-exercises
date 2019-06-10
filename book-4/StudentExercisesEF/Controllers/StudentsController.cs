@@ -124,6 +124,13 @@ namespace StudentExercisesEF.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EditStudentViewModel studentViewModel)
         {
+
+            List<int> PrevExerciseIds = _context.StudentExercise.Select(se => se.ExerciseId).ToList();
+
+
+            List<int> currentNotPrev = studentViewModel.ExerciseIds.Except(PrevExerciseIds).ToList();
+            List<int> prevNotCurrent = PrevExerciseIds.Except(studentViewModel.ExerciseIds).ToList();
+
             if (id != studentViewModel.student.Id)
             {
                 return NotFound();
@@ -136,7 +143,7 @@ namespace StudentExercisesEF.Controllers
                     _context.Update(studentViewModel.student);
 
 
-                    foreach(int exerciseId in studentViewModel.ExerciseIds)
+                    foreach(int exerciseId in currentNotPrev)
                     {
                         StudentExercise studentExercise = new StudentExercise()
                         {
@@ -144,6 +151,13 @@ namespace StudentExercisesEF.Controllers
                             ExerciseId = exerciseId
                         };
                         _context.Add(studentExercise);
+
+                    }
+
+                    foreach (int exerciseId in prevNotCurrent)
+                    {
+                        var studentExercise =  _context.StudentExercise.FirstOrDefault(se => se.StudentId == id && se.ExerciseId == exerciseId);
+                        _context.Remove(studentExercise);
 
                     }
 
