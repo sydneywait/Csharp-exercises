@@ -108,7 +108,7 @@ namespace StudentExercisesEF.Controllers
             studentViewModel.Exercises = Exercises;
 
             // Get the list of exercise the student is already working on to show pre-selected
-            List<int> exerciseIds = _context.StudentExercise.Select(se => se.ExerciseId).ToList();
+            List<int> exerciseIds = _context.StudentExercise.Where(se => se.StudentId == id).Select(se => se.ExerciseId).ToList();
             studentViewModel.ExerciseIds = exerciseIds;
 
 
@@ -125,7 +125,7 @@ namespace StudentExercisesEF.Controllers
         public async Task<IActionResult> Edit(int id, EditStudentViewModel studentViewModel)
         {
 
-            List<int> PrevExerciseIds = _context.StudentExercise.Select(se => se.ExerciseId).ToList();
+            List<int> PrevExerciseIds = _context.StudentExercise.Where(se => se.StudentId == id).Select(se => se.ExerciseId).ToList();
 
 
             List<int> currentNotPrev = studentViewModel.ExerciseIds.Except(PrevExerciseIds).ToList();
@@ -143,23 +143,29 @@ namespace StudentExercisesEF.Controllers
                     _context.Update(studentViewModel.student);
 
 
-                    foreach(int exerciseId in currentNotPrev)
+                    if (currentNotPrev.Count() > 0)
                     {
-                        StudentExercise studentExercise = new StudentExercise()
+                        foreach (int exerciseId in currentNotPrev)
                         {
-                            StudentId = id,
-                            ExerciseId = exerciseId
-                        };
-                        _context.Add(studentExercise);
+                            StudentExercise studentExercise = new StudentExercise()
+                            {
+                                StudentId = id,
+                                ExerciseId = exerciseId
+                            };
+                            _context.Add(studentExercise);
 
+                        }
                     }
 
-                    foreach (int exerciseId in prevNotCurrent)
+                    if (prevNotCurrent.Count() > 0) { 
+                        foreach (int exerciseId in prevNotCurrent)
                     {
                         var studentExercise =  _context.StudentExercise.FirstOrDefault(se => se.StudentId == id && se.ExerciseId == exerciseId);
                         _context.Remove(studentExercise);
 
                     }
+                    }
+
 
                     await _context.SaveChangesAsync();
                 }
