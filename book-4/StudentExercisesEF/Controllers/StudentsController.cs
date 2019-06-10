@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentExercisesEF.Data;
 using StudentExercisesEF.Models;
+using StudentExercisesEF.Models.ViewModels;
 
 namespace StudentExercisesEF.Controllers
 {
@@ -83,18 +84,37 @@ namespace StudentExercisesEF.Controllers
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            EditStudentViewModel studentViewModel = new EditStudentViewModel();
+
             if (id == null)
             {
                 return NotFound();
             }
 
             var student = await _context.Student.FindAsync(id);
+            studentViewModel.student = student;
+
             if (student == null)
             {
                 return NotFound();
             }
-            ViewData["CohortId"] = new SelectList(_context.Cohort, "Id", "Name", student.CohortId);
-            return View(student);
+
+            //Create a select list for the cohorts
+            SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name", studentViewModel.student.CohortId);
+            studentViewModel.Cohorts = Cohorts;
+
+            //Create a select list for the exercises
+            SelectList Exercises = new SelectList(_context.Exercise, "Id", "Name", studentViewModel.ExerciseIds);
+            studentViewModel.Exercises = Exercises;
+
+            // Get the list of exercise the student is already working on to show pre-selected
+            List<int> exerciseIds = _context.StudentExercise.Select(se => se.ExerciseId).ToList();
+            studentViewModel.ExerciseIds = exerciseIds;
+
+
+
+            return View(studentViewModel);
+
         }
 
         // POST: Students/Edit/5
@@ -102,9 +122,9 @@ namespace StudentExercisesEF.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,SlackHandle,CohortId")] Student student)
+        public async Task<IActionResult> Edit(int id, EditStudentViewModel studentViewModel)
         {
-            if (id != student.Id)
+            if (id != studentViewModel.student.Id)
             {
                 return NotFound();
             }
@@ -113,12 +133,25 @@ namespace StudentExercisesEF.Controllers
             {
                 try
                 {
-                    _context.Update(student);
+                    _context.Update(studentViewModel.student);
+
+
+                    foreach(int exerciseId in studentViewModel.ExerciseIds)
+                    {
+                        StudentExercise studentExercise = new StudentExercise()
+                        {
+                            StudentId = id,
+                            ExerciseId = exerciseId
+                        };
+                        _context.Add(studentExercise);
+
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentExists(student.Id))
+                    if (!StudentExists(studentViewModel.student.Id))
                     {
                         return NotFound();
                     }
@@ -129,8 +162,19 @@ namespace StudentExercisesEF.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CohortId"] = new SelectList(_context.Cohort, "Id", "Name", student.CohortId);
-            return View(student);
+            //Create a select list for the cohorts
+            SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name", studentViewModel.student.CohortId);
+            studentViewModel.Cohorts = Cohorts;
+
+            //Create a select list for the exercises
+            SelectList Exercises = new SelectList(_context.Exercise, "Id", "Name", studentViewModel.ExerciseIds);
+            studentViewModel.Exercises = Exercises;
+
+            // Get the list of exercise the student is already working on to show pre-selected
+            List<int> exerciseIds = _context.StudentExercise.Select(se => se.ExerciseId).ToList();
+            studentViewModel.ExerciseIds = exerciseIds;
+
+            return View(studentViewModel.student);
         }
 
         // GET: Students/Delete/5
