@@ -63,14 +63,13 @@ namespace TestStudentExercisesAPI
                 Assert.Equal(3, newAssignment.ExerciseId);
                 Assert.Equal(2, newAssignment.InstructorId);
 
-                // Clean up after ourselves- delete the assignment
-                deleteAssignment(newAssignment, client);
+                
             }
 
             
         }
 
-        
+
 
         //[Fact]
         //public async Task Test_Unassign_Exercise()
@@ -79,7 +78,8 @@ namespace TestStudentExercisesAPI
         //    using (var client = new APIClientProvider().Client)
         //    {
 
-        //        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        //        // Clean up after ourselves- delete the assignment
+        //        deleteAssignment(newAssignment, client);
         //    }
         //}
     }

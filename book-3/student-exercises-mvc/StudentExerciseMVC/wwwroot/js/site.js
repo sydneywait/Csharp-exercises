@@ -15,6 +15,7 @@ document.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
         //fetch('/Students/')
     })
 })
+
 function markExerciseComplete(exerciseId){
 
     console.log("you checked the box");
