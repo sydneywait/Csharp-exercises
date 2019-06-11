@@ -60,7 +60,7 @@ namespace StudentExercisesEF.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            CreateStudentViewModel studentViewModel = new CreateStudentViewModel();
+            StudentCreateViewModel studentViewModel = new StudentCreateViewModel();
             SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name");
             studentViewModel.Cohorts = Cohorts;
 
@@ -72,7 +72,7 @@ namespace StudentExercisesEF.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateStudentViewModel studentViewModel)
+        public async Task<IActionResult> Create(StudentCreateViewModel studentViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -89,7 +89,7 @@ namespace StudentExercisesEF.Controllers
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            EditStudentViewModel studentViewModel = new EditStudentViewModel();
+            StudentEditViewModel studentViewModel = new StudentEditViewModel();
 
             if (id == null)
             {
@@ -127,7 +127,7 @@ namespace StudentExercisesEF.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EditStudentViewModel studentViewModel)
+        public async Task<IActionResult> Edit(int id, StudentEditViewModel studentViewModel)
         {
             List<int> currentNotPrev = new List<int>();
             List<int> prevNotCurrent = new List<int>();

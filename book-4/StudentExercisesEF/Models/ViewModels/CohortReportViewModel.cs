@@ -11,9 +11,9 @@ namespace StudentExercisesEF.Models.ViewModels
         public int selectedCohortId { get; set; } = 0;
 
         public SelectList Cohorts { get; set; }
-        public List<Student> BusyStudents { get; set; } = new List<Student>();
-        public List<Student> LazyStudents { get; set; } = new List<Student>();
-        public List<StudentExercise> TopThreeExercise { get; set; } = new List<StudentExercise>();
+        public List<CohortStudentReport> BusyStudents { get; set; } 
+        public List<CohortStudentReport> LazyStudents { get; set; } = new List<CohortStudentReport>();
+        public List<CohortExerciseReport> TopThreeExercise { get; set; } = new List<CohortExerciseReport>();
 
 
 

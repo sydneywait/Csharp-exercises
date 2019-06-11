@@ -14,8 +14,7 @@
                 <label class="control-label">Select a Cohort to View the Report</label>
                 <select asp-for="selectedCohortId" class="form-control" asp-items="@Model.Cohorts">
                     <option value="" disabled selected>Select A Cohort...</option>
-
-                </select>
+                 </select>
                 <input type="submit" value="Submit" class="btn btn-primary" />
 
 
@@ -29,18 +28,22 @@
             <tr>
                 <th>Exercise Name</th>
                 <th>Programming Language</th>
+                <th>Number of Students</th>
             </tr>
             @foreach (var item in Model.TopThreeExercise)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Exercise.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Exercise.Language)
-                    </td>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.exercise.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.exercise.Language)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentCount)
+            </td>
 
-                </tr>
+        </tr>
             }
         </table>
     </dd>
@@ -55,20 +58,25 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Slack Handle</th>
+                <th>Number of Exercises</th>
+
             </tr>
             @foreach (var item in Model.BusyStudents)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SlackHandle)
-                    </td>
-                </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.SlackHandle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExerciseCount)
+            </td>
+        </tr>
             }
         </table>
     </dd>
@@ -81,20 +89,25 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Slack Handle</th>
+                <th>Number of Exercises</th>
+
             </tr>
             @foreach (var item in Model.LazyStudents)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FirstName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LastName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SlackHandle)
-                    </td>
-                </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.SlackHandle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExerciseCount)
+            </td>
+        </tr>
             }
         </table>
     </dd>

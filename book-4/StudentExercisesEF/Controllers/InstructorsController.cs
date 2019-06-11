@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentExercisesEF.Data;
 using StudentExercisesEF.Models;
+using StudentExercisesEF.Models.ViewModels;
 
 namespace StudentExercisesEF.Controllers
 {
@@ -49,8 +50,11 @@ namespace StudentExercisesEF.Controllers
         // GET: Instructors/Create
         public IActionResult Create()
         {
-            ViewData["CohortId"] = new SelectList(_context.Cohort, "Id", "Name");
-            return View();
+            InstructorCreateViewModel instructorViewModel = new InstructorCreateViewModel();
+            SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name");
+            instructorViewModel.Cohorts = Cohorts;
+
+            return View(instructorViewModel);
         }
 
         // POST: Instructors/Create

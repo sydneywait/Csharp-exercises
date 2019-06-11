@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace StudentExercisesEF.Models.ViewModels
 {
  
-    public class EditStudentViewModel
+    public class StudentEditViewModel
     {
 
         public SelectList Cohorts { get; set; }

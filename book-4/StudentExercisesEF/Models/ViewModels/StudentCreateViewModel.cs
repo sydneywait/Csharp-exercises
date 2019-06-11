@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StudentExercisesEF.Models.ViewModels
 {
-    public class CreateStudentViewModel
+    public class StudentCreateViewModel
     {
         public SelectList Cohorts { get; set; }
         public Student student { get; set; }

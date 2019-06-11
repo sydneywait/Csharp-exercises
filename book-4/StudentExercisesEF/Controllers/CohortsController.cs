@@ -164,14 +164,47 @@ namespace StudentExercisesEF.Controllers
             SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name",reportModel.selectedCohortId);
             reportModel.Cohorts = Cohorts;
 
-            List<Student> lazyStudents = await _context.Student.Where(s => s.CohortId == selectedCohortId).ToListAsync();
-                
+            //Generatea  report for The exercises that are in progress
+            var exercisesInProgress = await _context.StudentExercise.Include(se => se.Student).Where(se => se.Student.CohortId == selectedCohortId).Include(se => se.Exercise)
+            .GroupBy(se => new
+            {
+                se.Exercise.Name,
+                se.Exercise.Language,
+               
+            })
+            .Select(g => new CohortExerciseReport()
+            {
+                exercise = new Exercise()
+                {
+                    Name = g.Key.Name,
+                    Language = g.Key.Language
+                },
+                StudentCount = g.Count()
+            }).OrderByDescending(g => g.StudentCount).Take(3).ToListAsync();
 
+            reportModel.TopThreeExercise = exercisesInProgress;
+            //Generate a report for students that includes their name info and how many exercises they have completed
+            var workingStudents = await _context.StudentExercise.Where(se => se.isComplete == true).Include(se => se.Student).Where(se => se.Student.CohortId == selectedCohortId).Include(se => se.Exercise)
+            .GroupBy(se => new
+            {
+                se.Student.FirstName,
+                se.Student.LastName,
+                se.Student.SlackHandle,
 
+            })
+            .Select(g => new CohortStudentReport() {
+                student = new Student() {
+                    FirstName = g.Key.FirstName,
+                    LastName = g.Key.LastName,
+                    SlackHandle = g.Key.SlackHandle },
+                ExerciseCount = g.Count() }).ToListAsync();
+
+            var busyStudents = workingStudents.OrderByDescending(g => g.ExerciseCount).Take(3).ToList();
+            var lazyStudents = workingStudents.OrderBy(g => g.ExerciseCount).Take(3).ToList();
+            
+            reportModel.BusyStudents = busyStudents;
             reportModel.LazyStudents = lazyStudents;
-
-
-
+                       
             return View(reportModel);
         }
     }
