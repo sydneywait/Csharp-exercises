@@ -60,8 +60,11 @@ namespace StudentExercisesEF.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            ViewData["CohortId"] = new SelectList(_context.Cohort, "Id", "Name");
-            return View();
+            CreateStudentViewModel studentViewModel = new CreateStudentViewModel();
+            SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name");
+            studentViewModel.Cohorts = Cohorts;
+
+            return View(studentViewModel);
         }
 
         // POST: Students/Create
@@ -69,16 +72,18 @@ namespace StudentExercisesEF.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,SlackHandle,CohortId")] Student student)
+        public async Task<IActionResult> Create(CreateStudentViewModel studentViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(student);
+                _context.Add(studentViewModel.student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CohortId"] = new SelectList(_context.Cohort, "Id", "Name", student.CohortId);
-            return View(student);
+            SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name", studentViewModel.student.CohortId);
+            studentViewModel.Cohorts = Cohorts;
+
+            return View(studentViewModel);
         }
 
         // GET: Students/Edit/5
@@ -124,12 +129,13 @@ namespace StudentExercisesEF.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EditStudentViewModel studentViewModel)
         {
+            List<int> currentNotPrev = new List<int>();
+            List<int> prevNotCurrent = new List<int>();
 
             List<int> PrevExerciseIds = _context.StudentExercise.Where(se => se.StudentId == id).Select(se => se.ExerciseId).ToList();
 
-
-            List<int> currentNotPrev = studentViewModel.ExerciseIds.Except(PrevExerciseIds).ToList();
-            List<int> prevNotCurrent = PrevExerciseIds.Except(studentViewModel.ExerciseIds).ToList();
+            currentNotPrev = studentViewModel.ExerciseIds.Except(PrevExerciseIds).ToList();
+            prevNotCurrent = PrevExerciseIds.Except(studentViewModel.ExerciseIds).ToList();
 
             if (id != studentViewModel.student.Id)
             {
@@ -230,6 +236,39 @@ namespace StudentExercisesEF.Controllers
         private bool StudentExists(int id)
         {
             return _context.Student.Any(e => e.Id == id);
+        }
+
+        // PATCH /Students/CompleteExercise
+        [HttpPatch]
+
+        public async Task<IActionResult> PatchExercise([FromBody] StudentExercise studentExercise)
+        {
+            try
+            {            
+            _context.StudentExercise.Update(studentExercise);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+
+            }
+            catch (Exception e)
+            {
+                if (!StudentExerciseExists(studentExercise.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+
+        }
+
+        private bool StudentExerciseExists(int id)
+        {
+            return _context.StudentExercise.Any(se => se.Id == id);
         }
     }
 }

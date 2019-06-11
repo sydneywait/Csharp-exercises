@@ -48,3 +48,4 @@ C:\Users\newforce\workspace\Csharp-exercises\book-4\StudentExercisesEF\obj\Debug
 C:\Users\newforce\workspace\Csharp-exercises\book-4\StudentExercisesEF\obj\Debug\netcoreapp2.2\Razor\Views\Instructors\Details.g.cshtml.cs
 C:\Users\newforce\workspace\Csharp-exercises\book-4\StudentExercisesEF\obj\Debug\netcoreapp2.2\Razor\Views\Instructors\Edit.g.cshtml.cs
 C:\Users\newforce\workspace\Csharp-exercises\book-4\StudentExercisesEF\obj\Debug\netcoreapp2.2\Razor\Views\Instructors\Index.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\StudentExercisesEF\obj\Debug\netcoreapp2.2\Razor\Views\Cohorts\Reports.g.cshtml.cs

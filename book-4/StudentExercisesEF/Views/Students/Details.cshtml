@@ -48,15 +48,26 @@
             </tr>
             @foreach (var item in Model.StudentExercises)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Exercise.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Exercise.Language)
-                    </td>
-                    
-                </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Exercise.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Exercise.Language)
+            </td>
+            
+            <td>
+                <span>Completed?</span>
+                @Html.CheckBoxFor(
+                model => item.isComplete,
+                new
+                {
+                    @id = $"complete-{item.Id}-{Model.Id}-{item.Exercise.Id}",
+                    @class = "ml-2"
+                }
+                )
+            </td>
+        </tr>
             }
         </table>
     </dd>

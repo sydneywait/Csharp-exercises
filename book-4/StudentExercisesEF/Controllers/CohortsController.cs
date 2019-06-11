@@ -152,5 +152,11 @@ namespace StudentExercisesEF.Controllers
         {
             return _context.Cohort.Any(e => e.Id == id);
         }
+
+        //GET: Reports/
+        public async Task<IActionResult> Reports()
+        {
+            return View(await _context.Cohort.ToListAsync());
+        }
     }
 }
