@@ -8,7 +8,7 @@ namespace StudentExercisesEF.Models.ViewModels
 {
     public class CohortReportViewModel
     {
-        public int selectedCohortId { get; set; }
+        public int selectedCohortId { get; set; } = 0;
 
         public SelectList Cohorts { get; set; }
         public List<Student> BusyStudents { get; set; } = new List<Student>();

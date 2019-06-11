@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentExercisesEF.Data;
 using StudentExercisesEF.Models;
+using StudentExercisesEF.Models.ViewModels;
 
 namespace StudentExercisesEF.Controllers
 {
@@ -154,9 +155,24 @@ namespace StudentExercisesEF.Controllers
         }
 
         //GET: Reports/
-        public async Task<IActionResult> Reports()
+        public async Task<IActionResult> Reports(int selectedCohortId)
         {
-            return View(await _context.Cohort.ToListAsync());
+
+            CohortReportViewModel reportModel = new CohortReportViewModel();
+
+
+            SelectList Cohorts = new SelectList(_context.Cohort, "Id", "Name",reportModel.selectedCohortId);
+            reportModel.Cohorts = Cohorts;
+
+            List<Student> lazyStudents = await _context.Student.Where(s => s.CohortId == selectedCohortId).ToListAsync();
+                
+
+
+            reportModel.LazyStudents = lazyStudents;
+
+
+
+            return View(reportModel);
         }
     }
 }
