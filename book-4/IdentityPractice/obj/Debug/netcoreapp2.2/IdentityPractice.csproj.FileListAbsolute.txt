@@ -35,3 +35,9 @@ C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\n
 C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Views\ListItems\Details.g.cshtml.cs
 C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Views\ListItems\Edit.g.cshtml.cs
 C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Views\ListItems\Index.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\Account\Login.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\Account\Logout.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\Account\Register.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\Account\_ViewImports.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\_ValidationScriptsPartial.g.cshtml.cs
+C:\Users\newforce\workspace\Csharp-exercises\book-4\IdentityPractice\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\_ViewImports.g.cshtml.cs

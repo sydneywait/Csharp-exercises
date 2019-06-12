@@ -15,6 +15,7 @@ namespace IdentityPractice.Data
 
         }
         public DbSet<ListItem> ListItem {get; set;}  
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
 
 }
