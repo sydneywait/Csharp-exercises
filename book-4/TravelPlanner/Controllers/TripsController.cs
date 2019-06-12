@@ -2,27 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TravelPlanner.Data;
 using TravelPlanner.Models;
+using TravelPlanner.Models.ViewModels;
 
 namespace TravelPlanner.Controllers
 {
     public class TripsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public TripsController(ApplicationDbContext context)
-        {
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TripsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+       {
             _context = context;
+            _userManager = userManager;
         }
+
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Trips
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Trips.Include(t => t.Client);
+            var user = await GetCurrentUserAsync();
+
+            var applicationDbContext = _context.Trips.Include(t => t.Client).Where(c => c.Client.AgentId == user.Id);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -33,11 +40,14 @@ namespace TravelPlanner.Controllers
             {
                 return NotFound();
             }
+            //allows you to check if client belongs to this current user
+            var user = await GetCurrentUserAsync();
+
 
             var trip = await _context.Trips
                 .Include(t => t.Client)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (trip == null)
+            if (trip == null || trip.Client.AgentId != user.Id)
             {
                 return NotFound();
             }
@@ -46,10 +56,15 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Trips/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName");
-            return View();
+            var currentUser = await GetCurrentUserAsync();
+
+            TripViewModel tripModel = new TripViewModel();
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id",  "FullName");
+            tripModel.Clients = Clients;
+
+            return View(tripModel);
         }
 
         // POST: Trips/Create
@@ -57,21 +72,28 @@ namespace TravelPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,StartDate,EndDate,location,ClientId")] Trip trip)
+        public async Task<IActionResult> Create( TripViewModel tripModel)
         {
+            var currentUser = await GetCurrentUserAsync();
+
             if (ModelState.IsValid)
             {
-                _context.Add(trip);
+                
+                _context.Add(tripModel.trip);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", trip.ClientId);
-            return View(trip);
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id", "FullName");
+            tripModel.Clients = Clients;
+            return View(tripModel);
         }
 
         // GET: Trips/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, TripViewModel tripModel)
         {
+            var currentUser = await GetCurrentUserAsync();
+
             if (id == null)
             {
                 return NotFound();
@@ -82,8 +104,9 @@ namespace TravelPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", trip.ClientId);
-            return View(trip);
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id", "FirstName");
+            tripModel.Clients = Clients;
+            return View(tripModel);
         }
 
         // POST: Trips/Edit/5
@@ -91,9 +114,10 @@ namespace TravelPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,StartDate,EndDate,location,ClientId")] Trip trip)
-        {
-            if (id != trip.Id)
+        public async Task<IActionResult> Edit(int id, TripViewModel tripModel)
+        {  var currentUser = await GetCurrentUserAsync();
+
+            if (id != tripModel.trip.Id)
             {
                 return NotFound();
             }
@@ -102,12 +126,12 @@ namespace TravelPlanner.Controllers
             {
                 try
                 {
-                    _context.Update(trip);
+                    _context.Update(tripModel.trip);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TripExists(trip.Id))
+                    if (!TripExists(tripModel.trip.Id))
                     {
                         return NotFound();
                     }
@@ -118,8 +142,9 @@ namespace TravelPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClientId"] = new SelectList(_context.Clients, "Id", "FirstName", trip.ClientId);
-            return View(trip);
+            SelectList Clients = new SelectList(_context.Clients.Where(c=>c.AgentId ==currentUser.Id), "Id", "FirstName");
+            tripModel.Clients = Clients;
+            return View(tripModel);
         }
 
         // GET: Trips/Delete/5

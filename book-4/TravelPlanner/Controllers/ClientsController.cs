@@ -58,7 +58,6 @@ namespace TravelPlanner.Controllers
         // GET: Clients/Create
         public IActionResult Create()
         {
-            ViewData["AgentId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
             return View();
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,8 +18,11 @@ namespace TravelPlanner.Models
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        [NotMapped]
+        public string FullName { get { return this.FirstName + " " + this.LastName; } }
         [Required]
         [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^\d{3}-\d{3}-\d{4}$", ErrorMessage = "Enter a valid phone number (xxx-xxx-xxxx)")]
         public string PhoneNumber { get; set; }
 
         public string AgentId { get; set; }
