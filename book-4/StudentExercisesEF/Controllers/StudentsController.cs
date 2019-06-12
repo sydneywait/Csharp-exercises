@@ -21,16 +21,16 @@ namespace StudentExercisesEF.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string SearchString)
         {
-            ViewData["CurrentFilter"] = searchString;
+
 
             IQueryable<Student> applicationDbContext = _context.Student.Include(s => s.Cohort);
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!String.IsNullOrEmpty(SearchString))
             {
-                applicationDbContext = applicationDbContext.Where(s => s.FirstName.Contains(searchString)
-                                       || s.LastName.Contains(searchString));
+                applicationDbContext = applicationDbContext.Where(s => s.FirstName.Contains(SearchString)
+                                       || s.LastName.Contains(SearchString));
             }
 
             return View(await applicationDbContext.ToListAsync());
