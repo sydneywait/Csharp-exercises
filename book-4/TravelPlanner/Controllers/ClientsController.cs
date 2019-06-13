@@ -105,7 +105,8 @@ namespace TravelPlanner.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _context.Clients
+                .FindAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -181,8 +182,19 @@ namespace TravelPlanner.Controllers
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
-            _context.Clients.Remove(client);
+            var client = await _context.Clients
+                     .Include(c => c.Trips)
+                     .FirstOrDefaultAsync(c => c.Id == id);
+
+            //Archive client rather than delete
+            client.isArchived = true;
+
+            //Archive all of their trips
+            foreach(Trip t in client.Trips)
+            {
+                t.isArchived = true;
+            }
+            _context.Clients.Update(client);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -19,6 +19,7 @@ namespace TravelPlanner.Models
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime EndDate { get; set; }
         public string Location { get; set; }
+        public bool isArchived { get; set; }
         public int ClientId { get; set; }
         public Client Client { get; set; }
 

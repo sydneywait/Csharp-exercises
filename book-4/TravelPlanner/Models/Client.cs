@@ -22,8 +22,11 @@ namespace TravelPlanner.Models
         public string FullName { get { return this.FirstName + " " + this.LastName; } }
         [Required]
         [DataType(DataType.PhoneNumber)]
+        [Display(Name = "Phone Number")]
         [RegularExpression(@"^\d{3}-\d{3}-\d{4}$", ErrorMessage = "Enter a valid phone number (xxx-xxx-xxxx)")]
         public string PhoneNumber { get; set; }
+
+        public bool isArchived { get; set; }
 
         public string AgentId { get; set; }
         public ApplicationUser Agent { get; set; }
