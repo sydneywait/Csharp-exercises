@@ -32,7 +32,7 @@ namespace TravelPlanner.Controllers
         {
             var user = await GetCurrentUserAsync();
 
-            var applicationDbContext = _context.Trips.Include(t => t.Client).Where(c => c.Client.AgentId == user.Id).OrderBy(t=>t.StartDate).Where(t=>t.StartDate > DateTime.Now);
+            var applicationDbContext = _context.Trips.Include(t => t.Client).Where(c => c.Client.AgentId == user.Id).OrderBy(t=>t.StartDate).Where(t=>t.EndDate > DateTime.Now);
             return View(await applicationDbContext.ToListAsync());
         }
         // GET: PastTrips
@@ -42,7 +42,7 @@ namespace TravelPlanner.Controllers
         {
             var user = await GetCurrentUserAsync();
 
-            var applicationDbContext = _context.Trips.Include(t => t.Client).Where(c => c.Client.AgentId == user.Id).OrderBy(t => t.StartDate).Where(t => t.StartDate < DateTime.Now);
+            var applicationDbContext = _context.Trips.Include(t => t.Client).Where(c => c.Client.AgentId == user.Id).OrderBy(t => t.StartDate).Where(t => t.EndDate < DateTime.Now);
             return View(await applicationDbContext.ToListAsync());
         }
 
