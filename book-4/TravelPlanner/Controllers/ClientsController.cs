@@ -186,15 +186,26 @@ namespace TravelPlanner.Controllers
                      .Include(c => c.Trips)
                      .FirstOrDefaultAsync(c => c.Id == id);
 
-            //Archive client rather than delete
+            //If a client does not have any trips, delete them
+            if (client.Trips.Count() == 0)
+            {
+                _context.Clients.Remove(client);
+
+            }
+            else { 
+
+            //If a client has trips, archive client rather than delete
             client.isArchived = true;
 
-            //Archive all of their trips
+            //Also archive all of their trips
             foreach(Trip t in client.Trips)
             {
                 t.isArchived = true;
             }
             _context.Clients.Update(client);
+
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
