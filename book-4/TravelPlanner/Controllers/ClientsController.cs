@@ -28,11 +28,16 @@ namespace TravelPlanner.Controllers
 
         // GET: Clients
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             var user = await GetCurrentUserAsync();
             var applicationDbContext = _context.Clients.Include(c => c.Agent)
                 .Where(c=>c.AgentId==user.Id);
+
+            if (searchString != null)
+            {
+                applicationDbContext = applicationDbContext.Where(c => c.FirstName.Contains(searchString) || c.LastName.Contains(searchString));
+            }
             return View(await applicationDbContext.ToListAsync());
         }
 
