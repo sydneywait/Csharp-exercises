@@ -88,6 +88,7 @@ namespace TravelPlanner.Controllers
 
             TripViewModel tripModel = new TripViewModel();
             SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id",  "FullName");
+
             tripModel.Clients = Clients;
 
             return View(tripModel);
@@ -230,8 +231,14 @@ namespace TravelPlanner.Controllers
             TripReportViewModel reportModel = new TripReportViewModel();
             var user = await GetCurrentUserAsync();
 
-            var tripReport = _context.Trips.Include(t => t.Client)
-                .Where(t => t.Client.AgentId == user.Id);
+            var tripReport = await _context.Trips
+                .Where(t => t.Client.AgentId == user.Id)
+                .GroupBy(t =>t.StartDate.ToString("MMMM"))
+                .Select(g => new TripReport()
+                {
+                    month = g.Key,
+                    TripCount = g.Count()
+                }).ToListAsync();
 
 
             var clientReport = await _context.Trips.Include(t => t.Client)
@@ -241,8 +248,7 @@ namespace TravelPlanner.Controllers
                {
                    t.Client.FirstName,
                    t.Client.LastName,
-                   
-                  
+                
                })
                 .Select(g => new ClientReport()
                 {
@@ -258,9 +264,10 @@ namespace TravelPlanner.Controllers
 
 
             var busyClients = clientReport.OrderByDescending(g => g.TripCount).Take(5).ToList();
+            var busyMonths = tripReport.OrderByDescending(g => g.TripCount).Take(3).ToList();
 
-            //    report.BusyMonths = tripReport;
-            reportModel.BusyClients = clientReport;
+            reportModel.BusyMonths = busyMonths;
+            reportModel.BusyClients = busyClients;
 
 
             return View(reportModel);

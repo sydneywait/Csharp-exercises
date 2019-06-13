@@ -29,7 +29,12 @@
             </tr>
         }
 
-        <h4>Busiest Months</h4>
+
+    </table>
+</dd>
+
+
+<h4>Busiest Months</h4>
 <dd class="col-sm-10">
     <table class="table">
         <tr>
@@ -37,11 +42,11 @@
 
             <th>Number of Trips</th>
         </tr>
-        @foreach (var item in Model.BusyClients)
+        @foreach (var item in Model.BusyMonths)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.client.FullName)
+                    @Html.DisplayFor(modelItem => item.month)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TripCount)
@@ -49,7 +54,8 @@
 
 
             </tr>
+        
         }
-    </table>
-</dd>
 
+          </table>
+</dd>
