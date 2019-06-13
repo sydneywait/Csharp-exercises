@@ -32,7 +32,7 @@ namespace TravelPlanner.Controllers
         {
             var user = await GetCurrentUserAsync();
             var applicationDbContext = _context.Clients.Include(c => c.Agent)
-                .Where(c=>c.AgentId==user.Id);
+                .Where(c=>c.AgentId==user.Id).Where(c=>c.isArchived==false);
 
             if (searchString != null)
             {
@@ -214,5 +214,6 @@ namespace TravelPlanner.Controllers
         {
             return _context.Clients.Any(e => e.Id == id);
         }
+
     }
 }

@@ -33,7 +33,8 @@ namespace TravelPlanner.Controllers
             var user = await GetCurrentUserAsync();
 
             var applicationDbContext = _context.Trips.Include(t => t.Client)
-                .Where(c => c.Client.AgentId == user.Id)
+                .Where(t => t.Client.AgentId == user.Id)
+                .Where(t=>t.isArchived==false)
                 .OrderBy(t => t.StartDate)
                 .Where(t => t.EndDate > DateTime.Now);
             if (searchString != null)
@@ -207,7 +208,10 @@ namespace TravelPlanner.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var trip = await _context.Trips.FindAsync(id);
-            _context.Trips.Remove(trip);
+
+            //Archive trip 
+            trip.isArchived = true;
+            _context.Trips.Update(trip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -215,6 +219,51 @@ namespace TravelPlanner.Controllers
         private bool TripExists(int id)
         {
             return _context.Trips.Any(e => e.Id == id);
+        }
+
+        //GET: Trips/Report 
+        [Authorize]
+
+        public async Task<IActionResult> Report()
+        {
+
+            TripReportViewModel reportModel = new TripReportViewModel();
+            var user = await GetCurrentUserAsync();
+
+            var tripReport = _context.Trips.Include(t => t.Client)
+                .Where(t => t.Client.AgentId == user.Id);
+
+
+            var clientReport = await _context.Trips.Include(t => t.Client)
+                .Where(t=>t.Client.AgentId==user.Id)
+                .GroupBy(t =>
+               new
+               {
+                   t.Client.FirstName,
+                   t.Client.LastName,
+                   
+                  
+               })
+                .Select(g => new ClientReport()
+                {
+                    client = new Client()
+                    {
+                        FirstName = g.Key.FirstName,
+                        LastName = g.Key.LastName
+                    },
+                    TripCount = g.Count()
+                })
+                .ToListAsync();
+
+
+
+            var busyClients = clientReport.OrderByDescending(g => g.TripCount).Take(5).ToList();
+
+            //    report.BusyMonths = tripReport;
+            reportModel.BusyClients = clientReport;
+
+
+            return View(reportModel);
         }
     }
 }
