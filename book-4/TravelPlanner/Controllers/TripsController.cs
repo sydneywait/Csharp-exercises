@@ -28,11 +28,19 @@ namespace TravelPlanner.Controllers
         // GET: Trips
         [Authorize]
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             var user = await GetCurrentUserAsync();
 
-            var applicationDbContext = _context.Trips.Include(t => t.Client).Where(c => c.Client.AgentId == user.Id).OrderBy(t=>t.StartDate).Where(t=>t.EndDate > DateTime.Now);
+            var applicationDbContext = _context.Trips.Include(t => t.Client)
+                .Where(c => c.Client.AgentId == user.Id)
+                .OrderBy(t => t.StartDate)
+                .Where(t => t.EndDate > DateTime.Now);
+            if (searchString != null)
+            {
+                applicationDbContext = applicationDbContext.Where(t => t.Location.Contains(searchString));
+            }
+                
             return View(await applicationDbContext.ToListAsync());
         }
         // GET: PastTrips
