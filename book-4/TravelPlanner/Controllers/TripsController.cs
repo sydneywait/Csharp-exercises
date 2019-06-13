@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,6 +26,8 @@ namespace TravelPlanner.Controllers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: Trips
+        [Authorize]
+
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
@@ -34,6 +37,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Trips/Details/5
+        [Authorize]
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -56,6 +61,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Trips/Create
+        [Authorize]
+
         public async Task<IActionResult> Create()
         {
             var currentUser = await GetCurrentUserAsync();
@@ -72,6 +79,8 @@ namespace TravelPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
+
         public async Task<IActionResult> Create( TripViewModel tripModel)
         {
             var currentUser = await GetCurrentUserAsync();
@@ -90,6 +99,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Trips/Edit/5
+        [Authorize]
+
         public async Task<IActionResult> Edit(int? id, TripViewModel tripModel)
         {
             var currentUser = await GetCurrentUserAsync();
@@ -114,6 +125,8 @@ namespace TravelPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
+
         public async Task<IActionResult> Edit(int id, TripViewModel tripModel)
         {  var currentUser = await GetCurrentUserAsync();
 
@@ -148,6 +161,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Trips/Delete/5
+        [Authorize]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -169,6 +184,8 @@ namespace TravelPlanner.Controllers
         // POST: Trips/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var trip = await _context.Trips.FindAsync(id);

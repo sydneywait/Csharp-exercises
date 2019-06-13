@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,6 +27,7 @@ namespace TravelPlanner.Controllers
 
 
         // GET: Clients
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var user = await GetCurrentUserAsync();
@@ -35,6 +37,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Clients/Details/5
+        [Authorize]
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +50,7 @@ namespace TravelPlanner.Controllers
 
             var client = await _context.Clients
                 .Include(c => c.Agent)
+                .Include(c=>c.Trips)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (client == null|| client.AgentId != user.Id)
             {
@@ -56,6 +61,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Clients/Create
+        [Authorize]
+
         public IActionResult Create()
         {
             return View();
@@ -66,6 +73,8 @@ namespace TravelPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
+
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,PhoneNumber")] Client client)
         {
             var currentUser = await GetCurrentUserAsync();
@@ -82,6 +91,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Clients/Edit/5
+        [Authorize]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,7 +105,6 @@ namespace TravelPlanner.Controllers
             {
                 return NotFound();
             }
-            ViewData["AgentId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", client.AgentId);
             return View(client);
         }
 
@@ -103,7 +113,9 @@ namespace TravelPlanner.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,PhoneNumber,AgentId")] Client client)
+        [Authorize]
+
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,PhoneNumber")] Client client)
         {
             if (id != client.Id)
             {
@@ -137,6 +149,8 @@ namespace TravelPlanner.Controllers
         }
 
         // GET: Clients/Delete/5
+        [Authorize]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,6 +172,8 @@ namespace TravelPlanner.Controllers
         // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _context.Clients.FindAsync(id);
