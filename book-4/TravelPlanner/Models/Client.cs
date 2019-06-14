@@ -32,6 +32,7 @@ namespace TravelPlanner.Models
         public ApplicationUser Agent { get; set; }
 
         public List<Trip> Trips { get; set; } = new List<Trip>();
+        public List<Location> Locations { get; set; } = new List<Location>();
         
     }
 }
