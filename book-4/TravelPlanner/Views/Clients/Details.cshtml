@@ -1,4 +1,4 @@
-﻿@*@model TravelPlanner.Models.Client
+﻿@model TravelPlanner.Models.Client
 
 @{
     ViewData["Title"] = "Details";
@@ -35,27 +35,28 @@
             @Html.DisplayFor(model => model.Agent.FirstName)
             @Html.DisplayFor(model => model.Agent.LastName)
         </dd>
-
-
-
     </dl>
 
     <h4>Trips</h4>
     <hr />
 
-    @foreach (Trip trip in Model.Trips)
+    @foreach (ClientTrip ct in Model.ClientTrips)
     {
-        <dl class="row">
-            <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => trip.Location) </dt>
-            <dd class="col-sm-10"> @Html.DisplayFor(ModelItem => trip.Location)</dd>
+<dl class="row">
+
+    <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => ct.trip.StartDate)</dt>
+    <dd class="col-sm-10">@Html.DisplayFor(ModelItem => ct.trip.StartDate)</dd>
 
 
-            <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => trip.StartDate)</dt>
-            <dd class="col-sm-10">@Html.DisplayFor(ModelItem => trip.StartDate)</dd>
+    <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => ct.trip.EndDate)</dt>
+    <dd class="col-sm-10">@Html.DisplayFor(ModelItem => ct.trip.EndDate)</dd>
+    @foreach (TripLocation tl in ct.trip.TripLocations)
+    {
+        
+            <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => tl.location.Name) </dt>
+            <dd class="col-sm-10"> @Html.DisplayFor(ModelItem => tl.location.Name)</dd>
+            }
 
-
-            <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => trip.EndDate)</dt>
-            <dd class="col-sm-10">@Html.DisplayFor(ModelItem => trip.EndDate)</dd>
 
         </dl>
 
@@ -64,4 +65,4 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
-</div>*@
+</div>

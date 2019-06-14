@@ -11,6 +11,7 @@ namespace TravelPlanner.Models
         public int Id { get; set; }
         public int TripId { get; set; }
         public int LocationId { get; set; }
+        
         public Trip trip { get; set; }
         public Location location { get; set; }
     }

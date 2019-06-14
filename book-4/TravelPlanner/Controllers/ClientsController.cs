@@ -56,6 +56,9 @@ namespace TravelPlanner.Controllers
             var client = await _context.Clients
                 .Include(c => c.Agent)
                 .Include(c => c.ClientTrips)
+                .ThenInclude(ct=>ct.trip)
+                .ThenInclude(t=>t.TripLocations)
+                .ThenInclude(tl=>tl.location)
                 
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (client == null || client.AgentId != user.Id)
