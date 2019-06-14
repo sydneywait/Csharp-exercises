@@ -87,7 +87,7 @@ namespace TravelPlanner.Controllers
             var currentUser = await GetCurrentUserAsync();
 
             TripViewModel tripModel = new TripViewModel();
-            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id",  "FullName");
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived ==false), "Id",  "FullName");
 
             tripModel.Clients = Clients;
 
@@ -113,7 +113,7 @@ namespace TravelPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id", "FullName");
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
             tripModel.Clients = Clients;
             return View(tripModel);
         }
@@ -135,7 +135,7 @@ namespace TravelPlanner.Controllers
             {
                 return NotFound();
             }
-            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id), "Id", "FirstName");
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
             tripModel.Clients = Clients;
             return View(tripModel);
         }
@@ -175,7 +175,7 @@ namespace TravelPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            SelectList Clients = new SelectList(_context.Clients.Where(c=>c.AgentId ==currentUser.Id), "Id", "FirstName");
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
             tripModel.Clients = Clients;
             return View(tripModel);
         }
