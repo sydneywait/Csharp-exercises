@@ -14,9 +14,8 @@ namespace TravelPlanner.Models.ViewModels
         public SelectList Locations { get; set; }
         public Trip trip { get; set; }
         [Display(Name = "Clients")]
-        public List<int> selectedClients { get; set; }
+        public List<int> selectedClients { get; set; } = new List<int>();
         [Display(Name = "Locations")]
-        public List<int> selectedLocations { get; set;
-        }
+        public List<int> selectedLocations { get; set;} = new List<int>();
     }
 }

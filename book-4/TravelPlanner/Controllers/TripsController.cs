@@ -116,51 +116,100 @@ namespace TravelPlanner.Controllers
             return View(tripModel);
         }
 
-        //// POST: Trips/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[Authorize]
+        // POST: Trips/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
 
-        //public async Task<IActionResult> Create(TripViewModel tripModel)
-        //{
-        //    var currentUser = await GetCurrentUserAsync();
+        public async Task<IActionResult> Create(TripViewModel tripModel)
+        {
+            var currentUser = await GetCurrentUserAsync();
 
-        //    if (ModelState.IsValid)
-        //    {
+            if (ModelState.IsValid)
+            {
 
-        //        _context.Add(tripModel.trip);
+                _context.Add(tripModel.trip);
+                await _context.SaveChangesAsync();
 
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
-        //    tripModel.Clients = Clients;
-        //    return View(tripModel);
-        //}
 
-        //// GET: Trips/Edit/5
-        //[Authorize]
+                foreach (int locationId in tripModel.selectedLocations)
+                {
+                    TripLocation tripLocation = new TripLocation()
+                    {
+                        TripId = tripModel.trip.Id, //Need inserted id
+                        LocationId = locationId
+                    };
+                    _context.Add(tripLocation);
+                }
 
-        //public async Task<IActionResult> Edit(int? id, TripViewModel tripModel)
-        //{
-        //    var currentUser = await GetCurrentUserAsync();
+                foreach (int clientId in tripModel.selectedClients)
+                {
+                    ClientTrip clientTrip = new ClientTrip()
+                    {
+                        TripId = tripModel.trip.Id, //Need inserted id
+                        ClientId = clientId
+                    };
+                    _context.Add(clientTrip);
+                }
 
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var trip = await _context.Trips.FindAsync(id);
-        //    if (trip == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
-        //    tripModel.Clients = Clients;
-        //    return View(tripModel);
-        //}
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
+            SelectList Locations = new SelectList(_context.Locations, "Id", "Name");
+            tripModel.Clients = Clients;
+            tripModel.Locations = Locations;
+
+            return View(tripModel);
+        }
+
+        // GET: Trips/Edit/5
+        [Authorize]
+
+        public async Task<IActionResult> Edit(int? id, TripViewModel tripModel)
+        {
+            var currentUser = await GetCurrentUserAsync();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var trip = _context.Trips
+                .Include(t=>t.ClientTrips)
+                .Include(t=>t.TripLocations)
+                .FirstOrDefault(t=>t.Id == id);
+                
+
+
+            if (trip == null)
+            {
+                return NotFound();
+            }
+            SelectList Clients = new SelectList(_context.Clients.Where(c => c.AgentId == currentUser.Id && c.isArchived == false), "Id", "FullName");
+            SelectList Locations = new SelectList(_context.Locations, "Id", "Name");
+            tripModel.Clients = Clients;
+            tripModel.Locations = Locations;
+            tripModel.trip = trip;
+
+            foreach(TripLocation tl in trip.TripLocations)
+            {
+                tripModel.selectedLocations.Add(tl.LocationId);
+
+            }
+
+            foreach (ClientTrip ct in trip.ClientTrips)
+            {
+                tripModel.selectedClients.Add(ct.ClientId);
+
+            }
+
+            return View(tripModel);
+        }
 
         //// POST: Trips/Edit/5
         //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 

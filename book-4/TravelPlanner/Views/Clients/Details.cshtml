@@ -44,24 +44,27 @@
     {
 <dl class="row">
 
+    <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => ct.trip.Name)</dt>
+    <dd class="col-sm-10">@Html.DisplayFor(ModelItem => ct.trip.Name)</dd>
     <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => ct.trip.StartDate)</dt>
     <dd class="col-sm-10">@Html.DisplayFor(ModelItem => ct.trip.StartDate)</dd>
 
 
     <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => ct.trip.EndDate)</dt>
     <dd class="col-sm-10">@Html.DisplayFor(ModelItem => ct.trip.EndDate)</dd>
-    @foreach (TripLocation tl in ct.trip.TripLocations)
-    {
-        
-            <dt class="col-sm-2">@Html.DisplayNameFor(ModelItem => tl.location.Name) </dt>
-            <dd class="col-sm-10"> @Html.DisplayFor(ModelItem => tl.location.Name)</dd>
-            }
 
+    <dt class="col-sm-2">Locations</dt>
+    <dd class="col-sm-10">
+        @foreach (TripLocation tl in ct.trip.TripLocations)
+        {
 
-        </dl>
+            @Html.DisplayFor(ModelItem => tl.location.Name)<br/>
 
+        }
+    </dd>
+    
+</dl>
     }
-</div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
