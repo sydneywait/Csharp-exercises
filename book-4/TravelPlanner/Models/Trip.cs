@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,6 +21,8 @@ namespace TravelPlanner.Models
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime EndDate { get; set; }
         public bool isArchived { get; set; }
+        public List<TripLocation> TripLocations { get; set; } = new List<TripLocation>();
+        public List<ClientTrip> ClientTrips { get; set; } = new List<ClientTrip>();
         
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

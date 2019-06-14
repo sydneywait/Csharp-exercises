@@ -30,9 +30,9 @@ namespace TravelPlanner.Models
 
         public string AgentId { get; set; }
         public ApplicationUser Agent { get; set; }
-
-        public List<Trip> Trips { get; set; } = new List<Trip>();
-        public List<Location> Locations { get; set; } = new List<Location>();
+  
+  
+        public List<ClientTrip> ClientTrips { get; set; } = new List<ClientTrip>();
         
     }
 }

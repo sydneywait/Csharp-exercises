@@ -32,7 +32,7 @@ namespace TravelPlanner.Controllers
         {
             var user = await GetCurrentUserAsync();
             var applicationDbContext = _context.Clients.Include(c => c.Agent)
-                .Where(c=>c.AgentId==user.Id).Where(c=>c.isArchived==false);
+                .Where(c => c.AgentId == user.Id).Where(c => c.isArchived == false);
 
             if (searchString != null)
             {
@@ -55,9 +55,10 @@ namespace TravelPlanner.Controllers
 
             var client = await _context.Clients
                 .Include(c => c.Agent)
-                .Include(c=>c.Trips)
+                .Include(c => c.ClientTrips)
+                
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (client == null|| client.AgentId != user.Id)
+            if (client == null || client.AgentId != user.Id)
             {
                 return NotFound();
             }
@@ -183,26 +184,27 @@ namespace TravelPlanner.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _context.Clients
-                     .Include(c => c.Trips)
+                     .Include(c => c.ClientTrips)
                      .FirstOrDefaultAsync(c => c.Id == id);
 
             //If a client does not have any trips, delete them
-            if (client.Trips.Count() == 0)
+            if (client.ClientTrips.Count() == 0)
             {
                 _context.Clients.Remove(client);
 
             }
-            else { 
-
-            //If a client has trips, archive client rather than delete
-            client.isArchived = true;
-
-            //Also archive all of their trips
-            foreach(Trip t in client.Trips)
+            else
             {
-                t.isArchived = true;
-            }
-            _context.Clients.Update(client);
+
+                //If a client has trips, archive client rather than delete
+                client.isArchived = true;
+
+                //Also archive all of their trips
+                foreach (ClientTrip ct in client.ClientTrips)
+                {
+                    ct.isArchived = true;
+                }
+                _context.Clients.Update(client);
 
             }
 

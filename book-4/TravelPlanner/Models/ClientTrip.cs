@@ -11,7 +11,8 @@ namespace TravelPlanner.Models
         public int Id { get; set; }
         public int TripId { get; set; }
         public int ClientId { get; set; }
+        public bool isArchived { get; set; }
         public Trip trip { get; set; }
-        public Location client { get; set; }
+        public Client client { get; set; }
     }
 }
